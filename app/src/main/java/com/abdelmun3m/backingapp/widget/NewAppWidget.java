@@ -68,6 +68,13 @@ public class NewAppWidget extends AppWidgetProvider{
             views.setTextViewText(R.id.tv_ingredient_id,ingredients.get(0).quantity);
             views.setTextViewText(R.id.tv_ingredient_measure,ingredients.get(0).measure);*/
 
+            
+            
+            /**
+            *An intent that call the RemotoViews Service to vreate remote view adapter 
+            *i need to sent list 'arr' with this intent but when i use  in.putParcelableArrayListExtra
+            * intent dosn't launch.
+            **/
             Log.d("Twid","before");
             Intent in = new Intent(context,GridWidgetService.class);
 
