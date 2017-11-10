@@ -50,15 +50,7 @@ public class WidgetIntentService extends IntentService {
         Log.d("Twid","3 ");
         RemoteViews views = new RemoteViews(this.getPackageName(), R.layout.new_app_widget);
         Intent gridIntent = new Intent(this,GridWidgetService.class);
-       // Bundle b  = new Bundle();
-        //b.putParcelable("recip",recipe);
-        //    b.putInt("t",15);
-        //gridIntent.putExtra(Recipe_KEY,recipe);
-     //   gridIntent.setData(Uri.parse(gridIntent.toUri(Intent.URI_INTENT_SCHEME)));
-    //        Log.d("Twid","3 : "+b.getInt("t"));
-  //      gridIntent.putExtras(b);
 
-       // gridIntent.
         this.cRecipe = recipe;
         views.setRemoteAdapter(R.id.widget_gred,gridIntent);
 

@@ -99,7 +99,7 @@ class GridWidgetFactory implements RemoteViewsService.RemoteViewsFactory{
 
     @Override
     public int getViewTypeCount() {
-        return 0;
+        return 1;
     }
 
     @Override
