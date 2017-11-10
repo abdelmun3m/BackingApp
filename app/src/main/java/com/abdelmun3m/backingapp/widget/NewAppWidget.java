@@ -26,7 +26,7 @@ import java.util.Random;
 public class NewAppWidget extends AppWidgetProvider{
 
 
-    public static final String INGREDIENT_KEY = "ing";
+    public static final String INGREDIENT_KEY = "widget_ingredient_item";
     static Context context;
     static  AppWidgetManager appWidgetManager;
     static int appWidgetIds;
@@ -37,7 +37,7 @@ public class NewAppWidget extends AppWidgetProvider{
     public static void setMyfavoriteRecipe(Context context,Recipe r){
         mRecipe =r;
         ingredients =r.ingredients;
-        updateAppWidget(context,appWidgetManager,appWidgetIds);
+       // updateAppWidget(context,appWidgetManager,appWidgetIds);
     }
 
 
@@ -56,50 +56,11 @@ public class NewAppWidget extends AppWidgetProvider{
 
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int appWidgetId) {
-
-         CharSequence widgetText = context.getString(R.string.appwidget_text);
-         RemoteViews views;
-        if(mRecipe != null){
-            views = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
-
-            //Log.d("tttt",mRecipe.name+":"+mRecipe.imageId);
-            /*views.setTextViewText(R.id.tv_ingredient,ingredients.get(0).ingredient);
-            views.setTextViewText(R.id.tv_ingredient_id,ingredients.get(0).quantity);
-            views.setTextViewText(R.id.tv_ingredient_measure,ingredients.get(0).measure);*/
-
-            
-            
-            /**
-            *An intent that call RemotoViews Service to create remote view adapter 
-            *i need to sent list of data 'arr' with this intent but when i use  in.putParcelableArrayListExtra
-            * intent dosn't launch dosn't implent the GridWidgetService.class
-            **/
-            Log.d("Twid","before");
-            Intent in = new Intent(context,GridWidgetService.class);
-
-            //Ingredient[] arr = new Ingredient[mRecipe.ingredients.size()];
-
-            ArrayList<Ingredient> arr = new ArrayList<>();
-            for(int i =  0; i < mRecipe.ingredients.size() ; i++){
-               arr.add(mRecipe.ingredients.get(i));
-
-             // arr[i] = mRecipe.ingredients.get(i);
-            }
-            in.putParcelableArrayListExtra(INGREDIENT_KEY,arr);
-           // in.putExtra(INGREDIENT_KEY,arr);
-            views.setRemoteAdapter(R.id.widget_gred,in);
-
-        }
-        else {
-             views = new RemoteViews(context.getPackageName(), R.layout.ingredient_item);
-          //  Log.d("tttt","nu");
-        //    views.setImageViewResource(R.id.appwidget_img, RandomImageResource());
-        }
-        //Intent intent = new Intent(context,MainActivity.class);
-        //PendingIntent pendingIntent = PendingIntent.getActivity(context,0,intent,0);
-        //views.setOnClickPendingIntent(R.id.appwidget_img,pendingIntent);
-        // Instruct the widget manager to update the widget
+                                int appWidgetId,RemoteViews views) {
+        Log.d("Twid","7");
+        Intent intent = new Intent(context,MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context,0,intent,0);
+        views.setPendingIntentTemplate(R.id.widget_gred,pendingIntent);
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
@@ -108,17 +69,20 @@ public class NewAppWidget extends AppWidgetProvider{
         this.context = context;
         this.appWidgetManager = appWidgetManager;
 
-      /*  if( ingredients !=null && currentIngredient <= ingredients.size()){
-            currentIngredient++;
-        }else {
-            currentIngredient =-1;
-        }*/
         for (int appWidgetId : appWidgetIds) {
             this.appWidgetIds = appWidgetId;
-            updateAppWidget(context, appWidgetManager, appWidgetId);
+           // updateAppWidget(context, appWidgetManager, appWidgetId);
         }
     }
 
+
+    public static void UpdateWidgetRecipe(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds,RemoteViews views){
+        Log.d("Twid","5");
+        for (int appWidgetId : appWidgetIds) {
+            Log.d("Twid","6");
+            updateAppWidget(context, appWidgetManager, appWidgetId,views);
+        }
+    }
     @Override
     public void onEnabled(Context context) {
         // Enter relevant functionality for when the first widget is created

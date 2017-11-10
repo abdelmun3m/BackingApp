@@ -34,7 +34,13 @@
 
         <service
             android:name=".widget.GridWidgetService"
-            android:permission="android.permission.BIND_REMOTEVIEWS" />
+            android:permission="android.permission.BIND_REMOTEVIEWS"
+            android:exported="false"
+            />
+
+        <service android:name=".widget.WidgetIntentService">
+
+        </service>
     </application>
 
 </manifest>

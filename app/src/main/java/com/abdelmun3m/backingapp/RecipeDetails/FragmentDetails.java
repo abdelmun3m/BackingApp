@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.abdelmun3m.backingapp.widget.NewAppWidget;
 import com.abdelmun3m.backingapp.R;
 import com.abdelmun3m.backingapp.Utils.Recipe;
+import com.abdelmun3m.backingapp.widget.WidgetIntentService;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -241,7 +242,8 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
     @OnClick(R.id.img_favorit_button)
     public void setAsFavorite(View view){
         setFavoriteOn(true);
-        NewAppWidget.setMyfavoriteRecipe(mContext,mRecipe);
+       // NewAppWidget.setMyfavoriteRecipe(mContext,mRecipe);
+        WidgetIntentService.StartChangeIngredientService(mContext , mRecipe);
 
     }
 

@@ -17,7 +17,7 @@
         android:layout_height="match_parent"
         android:id="@+id/widget_gred"
         android:background="#cccccc"
-        android:numColumns="3"
+        android:numColumns="1"
         >
 
     </GridView>

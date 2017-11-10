@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="130dp"
-
     android:layout_marginStart="@dimen/card_nargin_Start"
     android:layout_marginEnd="@dimen/card_nargin_Start"
     android:paddingStart="@dimen/card_pading_start"
