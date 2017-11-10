@@ -71,9 +71,9 @@ public class NewAppWidget extends AppWidgetProvider{
             
             
             /**
-            *An intent that call the RemotoViews Service to vreate remote view adapter 
-            *i need to sent list 'arr' with this intent but when i use  in.putParcelableArrayListExtra
-            * intent dosn't launch.
+            *An intent that call RemotoViews Service to create remote view adapter 
+            *i need to sent list of data 'arr' with this intent but when i use  in.putParcelableArrayListExtra
+            * intent dosn't launch dosn't implent the GridWidgetService.class
             **/
             Log.d("Twid","before");
             Intent in = new Intent(context,GridWidgetService.class);
