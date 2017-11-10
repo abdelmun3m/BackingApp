@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="130dp"
+
+    android:layout_marginStart="@dimen/card_nargin_Start"
+    android:layout_marginEnd="@dimen/card_nargin_Start"
+    android:paddingStart="@dimen/card_pading_start"
+    android:paddingEnd="@dimen/card_pading_end"
+    android:background="#2d566b"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_ingredient_id"
+        android:text="1"
+        android:textSize="50sp"
+        android:textColor="@color/defaultCardColorText" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:textColor="#fefefe"
+        android:text="ss"
+        android:id="@+id/tv_ingredient_measure"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/tv_ingredient" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_ingredient"
+        android:text="this is an ingredient"
+        android:textSize="24sp"
+        android:textColor="#fefefe"
+        android:layout_below="@+id/tv_ingredient_measure"
+        android:layout_toEndOf="@+id/tv_ingredient_id"
+        android:layout_marginStart="16dp" />
+
+</RelativeLayout>

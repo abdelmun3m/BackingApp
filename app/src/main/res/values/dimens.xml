@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="recipeCardHeight">150dp</dimen>
+    <dimen name="RecipeCardMarginStart">20dp</dimen>
+    <dimen name="RecipeCardMarginEnd">20dp</dimen>
+    <dimen name="RecipeCardMarginBottom">18dp</dimen>
+    <dimen name="FragmentMarginTop">15dp</dimen>
+    <dimen name="card_nargin_Start">8dp</dimen>
+    <dimen name="card_pading_start">16dp</dimen>
+    <dimen name="card_pading_end">8dp</dimen>
+
+    <!--
+Refer to App Widget Documentation for margin information
+http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
+    -->
+    <dimen name="widget_margin">8dp</dimen>
+</resources>

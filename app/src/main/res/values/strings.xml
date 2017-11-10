@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">BackingApp</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="errormessage">ErrorMessage</string>
+    <string name="No_Data">NO Data Retrived</string>
+    <string name="Network_Error">No Network Connection</string>
+</resources>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/card_nargin_Start"
+    android:layout_marginEnd="@dimen/card_nargin_Start"
+    android:paddingStart="@dimen/card_pading_start"
+    android:paddingEnd="@dimen/card_pading_end"
+    android:paddingTop="16dp"
+    android:background="#227585">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/step_header"
+        >
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            tools:text="Recipe Description"
+            android:textColor="@color/defaultCardColorText"
+            android:id="@+id/tv_step_short_description"
+            />
+
+        <ImageButton
+            android:id="@+id/btn_play"
+            android:layout_weight="0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_step_short_description"
+            app:srcCompat="@android:drawable/ic_media_play"
+            android:background="#227585"
+            android:layout_marginEnd="8dp"
+            />
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/tv_step_description"
+        android:layout_width="wrap_content"
+        android:layout_height="300dp"
+        android:textSize="24sp"
+        tools:text="6. Pour the filling into the prepared crust and smooth the top. Spread the whipped cream over the filling.Refrigerate the pie for at least 2 hours. Then it's ready to serve!"
+        android:textColor="@color/defaultCardColorText"
+        android:layout_alignStart="@+id/step_header"
+        android:layout_below="@+id/step_header"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp" />
+
+</RelativeLayout>
