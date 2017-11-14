@@ -33,10 +33,9 @@ public class RecipesListAdapter extends RecyclerView.Adapter<RecipesListAdapter.
 
     RecipeCardListener mRecipeCardListener;
     
-    public void UpdateListOfRecipes(FragmentManager manager,List<Recipe> newRecipes){
+    public void UpdateListOfRecipes(List<Recipe> newRecipes){
         this.mRecipes = newRecipes;
         notifyDataSetChanged();
-        Log.d("mylog",""+mRecipes.size());
     }
 
     public RecipesListAdapter(RecipeCardListener listener){

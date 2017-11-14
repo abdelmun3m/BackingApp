@@ -2,10 +2,13 @@ package com.abdelmun3m.backingapp.RecipeDetails;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
@@ -15,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.abdelmun3m.backingapp.widget.NewAppWidget;
 import com.abdelmun3m.backingapp.R;
 import com.abdelmun3m.backingapp.Utils.Recipe;
 import com.abdelmun3m.backingapp.widget.WidgetIntentService;
@@ -38,39 +40,65 @@ import butterknife.OnClick;
 
 /**
  * Created by abdelmun3m on 07/11/17.
+ *
+ * FragmentDetails Class is a class for the Details fragment
+ * which displayed in the Details Activity
+ *
+ * it accepts a Recipe Object as parameter to display its data
+ *
+ * it can be initiated  from IngredientDetailsContainer when click on recipe.
+ *
+ * it can be intiated from MainActivity in tablet screen size
+ *
+ * it can be initiated from NewAppWidget when widget click.
+ *
+ *
  */
 
 public class FragmentDetails extends Fragment implements ExoPlayer.EventListener {
 
 
 
-    private static final java.lang.String TAG = "RecipeDetailsContainer" ;
+    private final java.lang.String TAG = "RecipeDetailsContainer" ;
+
     @BindView(R.id.tv_detail_recipe_name)
     TextView mRecipeName;
+
     @BindView(R.id.iv_details_recipe_img)
     ImageView mRecipeImage;
+
     @BindView(R.id.player_view)
     SimpleExoPlayerView myExoPlayerView;
+
     @BindView(R.id.pb_player_progress)
     ProgressBar mPlayerProgress;
+
     @BindView(R.id.img_favorit_button)
     ImageView mFavoriteButton;
 
-    private MediaSessionCompat mMediaSession;
+
+    //defined static couse it is used in static class MediaReceiver
+    private static MediaSessionCompat mMediaSession;
+
     private PlaybackStateCompat.Builder mStateBuilder;
-    Recipe mRecipe;
 
-    View rootView;
-    Context mContext;
+    private Recipe mRecipe;
 
-    SimpleExoPlayer mExoPlayer;
+    private View rootView;
+    private Context mContext;
+
+
+    private SimpleExoPlayer mExoPlayer;
 
     public FragmentDetails(Recipe m) {
+        /**
+         * Constructor to intiate the fragment ant set Recipe
+         * */
         this.mRecipe = m ;
     }
 
     public  FragmentDetails(){
-
+    // default instructor
     }
 
     @Nullable
@@ -79,29 +107,39 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
 
         rootView = inflater.inflate(R.layout.fragment_details,container,false);
         mContext = rootView.getContext();
+
+        //using ButterKnife Library and bind view
         ButterKnife.bind(this,rootView);
 
         if(mRecipe ==null){
+
+            // if the object intiated with null object it will return an empty view of the fragment_details.xml
             return rootView;
         }
 
-        String mFavoriteRecipeId = NewAppWidget.getMyFavoriteRecipeId();
-        if(mFavoriteRecipeId != null && mFavoriteRecipeId.equals(mRecipe.Id)){
 
-            setFavoriteOn(true);
+        setFavoriteStar();
 
-        }else{
-            setFavoriteOn(false);
-        }
 
+        //set the detail Header Part
         mRecipeName.setText(mRecipe.name);
         mRecipeImage.setImageResource(mRecipe.imageId);
+
+
+
         FragmentManager fragmentManager = getFragmentManager();
 
 
+
+        //ToDO Test this new Update of .add ---> .replace
         //create fragment ingredient and pass the ingredient of the current recipe
         FragmentIngredient ingredient = new FragmentIngredient(mRecipe.ingredients);
-        fragmentManager.beginTransaction().add(R.id.container_ingredient,ingredient).commit();
+        fragmentManager.beginTransaction().replace(R.id.container_ingredient,ingredient).commit();
+
+
+        //create fragment ingredient and pass the steps of the current recipe and pass exoplayer
+        FragmentStep steps = new FragmentStep(mRecipe.steps,this.mExoPlayer);
+        fragmentManager.beginTransaction().replace(R.id.container_steps,steps).commit();
 
 
         //intiate and handle videos
@@ -112,14 +150,29 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
         myExoPlayerView.setDefaultArtwork(BitmapFactory.decodeResource
                 (getResources(), mRecipe.imageId));
 
-        //create fragment ingredient and pass the steps of the current recipe and pass exoplayer
-        FragmentStep steps = new FragmentStep(mRecipe.steps,this.mExoPlayer);
-        fragmentManager.beginTransaction().add(R.id.container_steps,steps).commit();
 
 
         return rootView;
     }
 
+
+    private void setFavoriteStar(){
+        /**
+         *
+         * this function check the Recipe Used in the Widget to
+         * mark the current displayed recipe as favorite
+         * */
+
+
+        String mFavoriteRecipeId = WidgetIntentService.curRecipe != null ?
+                WidgetIntentService.curRecipe.Id:"";
+        if(mFavoriteRecipeId != null && mFavoriteRecipeId.equals(mRecipe.Id)){
+            setFavoriteOn(true);
+        }else{
+            setFavoriteOn(false);
+        }
+
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,6 +184,7 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
 
     private void initializeMediaPlayer(Context context) {
 
+        // set Exoplayer Controllers
         if(mExoPlayer == null){
             TrackSelector selector = new DefaultTrackSelector();
             LoadControl control = new DefaultLoadControl();
@@ -182,6 +236,7 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
 
     @Override
     public void onLoadingChanged(boolean isLoading) {
+        //TODO Controle ProgressPar in Playing Videos
         if(!isLoading){
             mPlayerProgress.setVisibility(View.GONE);
         }
@@ -240,15 +295,17 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
     }
 
     @OnClick(R.id.img_favorit_button)
-    public void setAsFavorite(View view){
+    public void setAsFavorite(View view) {
         setFavoriteOn(true);
-       // NewAppWidget.setMyfavoriteRecipe(mContext,mRecipe);
-        WidgetIntentService.StartChangeIngredientService(mContext , mRecipe);
 
+        WidgetIntentService.UpdateWidgetRecipe(mContext, mRecipe);
     }
+
 
     private void setFavoriteOn(boolean favorite){
 
+
+        //change the star image according to widget recipe and current recipe
         if(favorite){
             mFavoriteButton.setImageResource(android.R.drawable.star_big_on);
         }else {
@@ -257,5 +314,22 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
 
     }
 
+
+    public static class MediaReceiver extends BroadcastReceiver {
+
+
+        /*
+        *
+        * BreadCast Receiver to handel media controls
+        *
+        * **/
+        public MediaReceiver() {
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            MediaButtonReceiver.handleIntent(mMediaSession, intent);
+        }
+    }
 
 }

@@ -16,9 +16,9 @@ import java.util.List;
 
 public class Ingredient implements Parcelable{
 
-    private static final String JSON_QUANTITY = "quantity";
-    private static final String JSON_MEASURE = "measure";
-    private static final String JSON_INGREDIENT = "ingredient";
+    private  final String JSON_QUANTITY = "quantity";
+    private  final String JSON_MEASURE = "measure";
+    private  final String JSON_INGREDIENT = "ingredient";
     public int id ;
     public String quantity;
     public String measure;
@@ -48,7 +48,9 @@ public class Ingredient implements Parcelable{
 
     }
 
-    public static List<Ingredient> getIngredients(String string_steps) throws JSONException {
+
+    // get String and Parse to Ingredient List
+    public  List<Ingredient> getIngredients(String string_steps) throws JSONException {
         List<Ingredient> ingredientList = new ArrayList<>();
 
         JSONArray steps = new JSONArray(string_steps);

@@ -85,7 +85,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void addDetailsFragment(Recipe r){
-
         if(findViewById(R.id.dual_detail_view) != null){
             mDetailFragment = new FragmentDetails(r);
             getFragmentManager().beginTransaction().replace(R.id.dual_detail_view,mDetailFragment).commit();

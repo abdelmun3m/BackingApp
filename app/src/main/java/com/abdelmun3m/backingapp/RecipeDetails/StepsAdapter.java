@@ -1,7 +1,5 @@
 package com.abdelmun3m.backingapp.RecipeDetails;
 
-import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,23 +10,6 @@ import android.widget.TextView;
 
 import com.abdelmun3m.backingapp.R;
 import com.abdelmun3m.backingapp.Utils.Step;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.LoadControl;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,8 +27,6 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepsViewHol
 
     List<Step> mStepsList = new ArrayList<>();
     StepsClickListener mClickListener = null;
-
-   /* SimpleExoPlayer mExoPlayer;*/
 
     public StepsAdapter(StepsClickListener listener){
         mClickListener = listener;
@@ -82,18 +61,19 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepsViewHol
     {
 
         Step s=null;
+
         @BindView(R.id.tv_step_short_description)
         TextView mRecipeShortDescription;
+
         @BindView(R.id.tv_step_description)
         TextView mRecipetDescription;
+
         @BindView(R.id.btn_play)
         ImageView mPlayerButton;
-       /* @BindView(R.id.player_view)
-        SimpleExoPlayerView myExoPlayerView;*/
+
         public StepsViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this,itemView);
-            //itemView.setOnClickListener(this);
             mRecipetDescription.setOnClickListener(this);
         }
 
@@ -101,13 +81,14 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepsViewHol
             s = mStepsList.get(position);
             mRecipeShortDescription.setText(s.shortDescription.trim());
             mRecipetDescription.setText(s.description);
-            if(s.videoURL.equals("") && s.videoURL == null){
-                mPlayerButton.setVisibility(View.GONE);
-            }if(s.thumbnailURL.equals("") && s.thumbnailURL ==null){
-                mPlayerButton.setVisibility(View.GONE);
-            }else {
-                mPlayerButton.setVisibility(View.VISIBLE);
+
+            //Function To Hide the the video Play Button if both videoURL Ond thumbnailURL is empty
+            if(s.videoURL.equals("") || s.videoURL == null){
+                if(s.thumbnailURL.equals("") || s.thumbnailURL ==null){
+                    mPlayerButton.setVisibility(View.INVISIBLE);
+                }
             }
+
         }
 
         @Override
@@ -116,14 +97,17 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepsViewHol
                 mClickListener.onStepClick(mStepsList.get(getAdapterPosition()));
             }
         }
+
         @OnClick(R.id.btn_play)
         public void LoadStepVideo(View v){
-            if(s.videoURL.equals("") && s.videoURL == null){
-                return;
-            }else if(s.thumbnailURL.equals("") && s.thumbnailURL == null){
-                return;
+
+            //Function To load the the video URI to ExoPlayer from Recipe  videoURL Or thumbnailURL
+            Uri uri = null;
+            if(!s.videoURL.equals("") && s.videoURL != null){
+                uri = Uri.parse(s.videoURL).buildUpon().build();
+            }else if(!s.thumbnailURL.equals("") && s.thumbnailURL != null){
+                uri = Uri.parse(s.thumbnailURL).buildUpon().build();
             }
-            Uri uri = Uri.parse(s.videoURL).buildUpon().build();
             mClickListener.onVideoLoadClick(uri);
         }
 
@@ -132,7 +116,10 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepsViewHol
 
 
     public interface StepsClickListener {
+        //on step click create Toast
         void onStepClick(Step s);
+
+        //on Play Button click Load Step video
         void onVideoLoadClick(Uri uri);
     }
 

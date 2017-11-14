@@ -22,10 +22,10 @@ import butterknife.ButterKnife;
  *
  * Adapter that handle ingredient Recycler View
  * it will get the activity which implement the IngredientClickListener
- * to link between the adapter and the @RecipeDetailsContainer to handle Ingredient Click to generate Toast
+ * to link between the adapter and the @FragmentDetails to handle Ingredient Click to generate Toast
  */
 
-public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.IngredientViewHolder>{
+public class AdapterIngredient extends RecyclerView.Adapter<AdapterIngredient.IngredientViewHolder>{
 
 
 
@@ -33,21 +33,20 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.In
 
     IngredientClickListener mIngredientListener = null;
 
-    public IngredientAdapter(IngredientClickListener listenr){
+    public AdapterIngredient(IngredientClickListener listenr){
         this.mIngredientListener = listenr;
     }
-
-
-
 
 
     public void UpdateIngredientList(List<Ingredient> newIngredient){
         this.mIngredientsList = newIngredient;
         notifyDataSetChanged();
     }
+
     @Override
     public IngredientViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.ingredient_item,parent,false);
+        View mView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.ingredient_item,parent,false);
         IngredientViewHolder mViewHolder = new IngredientViewHolder(mView);
         return mViewHolder;
     }
@@ -62,11 +61,18 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.In
         return mIngredientsList.size();
     }
 
-    public class IngredientViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class IngredientViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener{
 
-        @BindView(R.id.tv_ingredient) TextView mIngredient;
-        @BindView(R.id.tv_ingredient_id)TextView mIngredientID;
-        @BindView(R.id.tv_ingredient_measure)TextView mIngredientMeasure;
+        @BindView(R.id.tv_ingredient)
+        TextView mIngredient;
+
+        @BindView(R.id.tv_ingredient_id)
+        TextView mIngredientID;
+
+        @BindView(R.id.tv_ingredient_measure)
+        TextView mIngredientMeasure;
+
         public IngredientViewHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
@@ -89,6 +95,7 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.In
     }
 
 
+    // interface to handel ingredient click
     public interface IngredientClickListener{
         void OnIngredientClick(Ingredient ing);
     }

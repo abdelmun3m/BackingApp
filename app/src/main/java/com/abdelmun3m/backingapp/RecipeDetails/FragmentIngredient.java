@@ -26,18 +26,20 @@ import butterknife.ButterKnife;
  *
  *
  * class that mange and display the ingredient of a recipe in the Ingredient RecyclerView
- * impalement the @LayoutManager and  @IngredientAdapter
+ * impalement the @LayoutManager and  @AdapterIngredient
  *
  *
- * it will be called from the class @RecipeDetailsContainer
- * will take  a list of @ingredient that will be passed to the adapter
+ * it will be called from the class @FragmentDetails.
+ * will take  a list of @ingredient that will be passed to the adapter to create view
  */
 
-public class FragmentIngredient extends Fragment implements IngredientAdapter.IngredientClickListener{
+public class FragmentIngredient extends Fragment implements AdapterIngredient.IngredientClickListener{
 
 
     Context mContext;
+
     List<Ingredient> mIngredientList = new ArrayList<>();
+
     @BindView(R.id.rv_ingredient)
     RecyclerView mIngredientView;
 
@@ -55,14 +57,18 @@ public class FragmentIngredient extends Fragment implements IngredientAdapter.In
 
     public FragmentIngredient(){
     }
+
+
     public FragmentIngredient(List<Ingredient> ing){
         this.mIngredientList = ing;
     }
+
+
     private void setLayoutManger() {
         //set Layout manager and Adapter
         RecyclerView.LayoutManager manager =
                 new LinearLayoutManager(mContext,LinearLayoutManager.HORIZONTAL,false);
-        IngredientAdapter adapter = new IngredientAdapter(this);
+        AdapterIngredient adapter = new AdapterIngredient(this);
         mIngredientView.setAdapter(adapter);
         mIngredientView.setLayoutManager(manager);
         mIngredientView.setHasFixedSize(true);
@@ -71,8 +77,8 @@ public class FragmentIngredient extends Fragment implements IngredientAdapter.In
 
     @Override
     public void OnIngredientClick(Ingredient ing) {
-        /* Overrided from  @IngredientAdapter.IngredientClickListener to
-        *Create atost chows the Ingtrediebt
+        /* Override from  @AdapterIngredient.IngredientClickListener to
+        * in case of the content of ingredient is not full appear create a Toast
         */
         Toast.makeText(mContext,""+ing.ingredient, Toast.LENGTH_SHORT).show();
     }

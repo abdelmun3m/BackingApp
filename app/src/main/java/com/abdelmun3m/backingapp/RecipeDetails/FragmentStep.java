@@ -5,7 +5,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.LoaderManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -27,7 +26,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by abdelmun3m on 22/10/17.
@@ -38,7 +36,7 @@ import butterknife.OnClick;
  * impalement the @LayoutManager and  @StepsAdapter
  *
  *
- * it will be called from the class @RecipeDetailsContainer
+ * it will be called from the class @FragmentDetails
  * will take  a list of @ingredient that will be passed to the adapter
  * and
  * exoPlayer object that will be used to play the 'step' video
@@ -53,7 +51,10 @@ public class FragmentStep extends Fragment implements StepsAdapter.StepsClickLis
     List<Step> mStepsList = new ArrayList<>();
     SimpleExoPlayer mExoPlayer;
 
-    @BindView(R.id.rv_step)RecyclerView mStepsView;
+    @BindView(R.id.rv_step)
+    RecyclerView mStepsView;
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -67,13 +68,16 @@ public class FragmentStep extends Fragment implements StepsAdapter.StepsClickLis
     public FragmentStep(){
 
     }
+
+
     public FragmentStep(List<Step> s ,SimpleExoPlayer player){
         this.mStepsList =s;
         this.mExoPlayer=player;
     }
 
     private void setLayoutManger() {
-        /*set layoutManager and steps Adapter
+        /*
+        *set layoutManager and steps Adapter
         *
         * and update adapter list with the passed date from RecipeDetailsContainer
         *
@@ -99,7 +103,6 @@ public class FragmentStep extends Fragment implements StepsAdapter.StepsClickLis
 
         Toast.makeText(mContext,""+s.description, Toast.LENGTH_LONG).show();
 
-
     }
 
     @Override
@@ -110,14 +113,18 @@ public class FragmentStep extends Fragment implements StepsAdapter.StepsClickLis
         * to handle video Icon click to load the step video into the ExoPlayer Object
         *
         * */
-        setMediaSource(uri);
+        if(uri != null) {
+            setMediaSource(uri);
+        }
+
+
     }
 
     private void setMediaSource(Uri uri){
 
         /*
         *
-        * change the media Source in the ExoPlayer Onject
+        * change the media Source in the ExoPlayer Object
         *
         * **/
 

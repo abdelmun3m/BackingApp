@@ -24,10 +24,10 @@ public class Step implements Parcelable{
     public String videoURL;
     public String thumbnailURL;
 
-    public static final String SHORT_DESCRIPTION ="shortDescription";
-    public static final String DESCRIPTION ="description";
-    public static final String VIDEO_URL ="videoURL";
-    public static final String THUMBNAIL_URL ="thumbnailURL";
+    public  final String SHORT_DESCRIPTION ="shortDescription";
+    public  final String DESCRIPTION ="description";
+    public  final String VIDEO_URL ="videoURL";
+    public  final String THUMBNAIL_URL ="thumbnailURL";
 
 
     protected Step(Parcel in) {
@@ -54,7 +54,8 @@ public class Step implements Parcelable{
 
     }
 
-    public static List<Step> getSteps(String stringSteps) throws JSONException{
+    // get String and Parse to step List
+    public  List<Step> getSteps(String stringSteps) throws JSONException{
 
         List<Step> stepsList = new ArrayList<>();
 

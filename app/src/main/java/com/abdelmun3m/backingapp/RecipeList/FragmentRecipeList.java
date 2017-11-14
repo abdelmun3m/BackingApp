@@ -39,6 +39,10 @@ import butterknife.ButterKnife;
 
 /**
  * Created by abdelmun3m on 20/10/17.
+ *
+ *  this class is to create Fragment which used in the main activity to load the Recipes from the the Recipe Json data
+ *  and Display it in a recycler view.
+ *
  */
 
 public class FragmentRecipeList extends Fragment implements RecipesListAdapter.RecipeCardListener,
@@ -46,37 +50,49 @@ public class FragmentRecipeList extends Fragment implements RecipesListAdapter.R
 
     @BindView(R.id.rv_recipes)
     RecyclerView mRecipesRecyclerView;
+
     @BindView(R.id.pb_loading_cards)
     ProgressBar mLoadingProgress;
+
     @BindView(R.id.tv_error_message)
     TextView errorMessage ;
+
     @BindView(R.id.listParent)
     LinearLayout parent;
+
     View rootView;
     Context mContext;
     RecipesListAdapter mRecipesAdapter;
-    public boolean done = false;
-    private static final int LOADER_ID = 720;
+
+
+    private final int LOADER_ID = 720;
+
     private URL mResultUrl ;
-    private static final String RECIPE_URL
+
+    private final String RECIPE_URL
             = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
-    public Recipe mRecipe ;
+
+    private Recipe mRecipe ;
+
     public boolean rotate = false;
+
+
+    //used in dual mode
     InDualModeRecipeItemClick dualListener = null;
 
 
 
+    //used in testing
     @Nullable
     private SimpleIdlingResource mIdlingResource;
 
 
     public FragmentRecipeList(){}
+
     public FragmentRecipeList(InDualModeRecipeItemClick dual){
-
-
-
         this.dualListener = dual;
     }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,15 +102,18 @@ public class FragmentRecipeList extends Fragment implements RecipesListAdapter.R
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
-        /* intiat the layout and set the fragment_recipe_card_list.xml to this fragment class
+        /* initiate the layout and set the fragment_recipe_card_list.xml to this fragment class
         * which contains a list of the recipes
         */
 
-        Log.d("mylog","onCreateView");
          rootView = inflater.inflate(R.layout.fragment_recipe_card_list,container,false);
          mContext = rootView.getContext();
+
          ButterKnife.bind(this,rootView);
+
          setLayoutManger();
+
+        //Build the Data URL
         mResultUrl = null;
         try {
             mResultUrl = Data.BuildUrl(RECIPE_URL);
@@ -102,6 +121,9 @@ public class FragmentRecipeList extends Fragment implements RecipesListAdapter.R
             e.printStackTrace();
         }
 
+
+        //ToDo Check handling from initLoader and restartLoader from MovieDB
+        //check network Connection Before Loading Data.
         if(Data.NetworkConnectivityAvailable(mContext)) {
             getLoaderManager().initLoader(LOADER_ID,null, this);
         }else {
@@ -114,9 +136,6 @@ public class FragmentRecipeList extends Fragment implements RecipesListAdapter.R
     @Override
     public void onResume() {
         super.onResume();
-
-
-
     }
 
     private void setLayoutManger() {
@@ -124,12 +143,14 @@ public class FragmentRecipeList extends Fragment implements RecipesListAdapter.R
         mRecipesRecyclerView.setLayoutManager(manger);
         mRecipesAdapter = new RecipesListAdapter(this);
         mRecipesRecyclerView.setAdapter(mRecipesAdapter);
-
     }
 
     @Override
     public void onRecipeCardClick(Recipe r) {
 
+        //decide to create a new Activity or load fragment in the Dual Mode View
+        // value of dualListener will be not NUll if we create
+        // this fragment from Dual Mode MainActivity  Class
         if(dualListener != null){
             dualListener.changeDualModeRecipe(r);
         }else {
@@ -145,6 +166,7 @@ public class FragmentRecipeList extends Fragment implements RecipesListAdapter.R
         return new android.content.AsyncTaskLoader<String>(mContext) {
 
             String cash;
+
             @Override
             public void deliverResult(String data) {
                 cash = data;
@@ -155,6 +177,7 @@ public class FragmentRecipeList extends Fragment implements RecipesListAdapter.R
             protected void onStartLoading() {
 
                 if(mIdlingResource != null){
+                    //used in testing
                     mIdlingResource.setIdleState(false);
                 }
 
@@ -169,6 +192,7 @@ public class FragmentRecipeList extends Fragment implements RecipesListAdapter.R
 
             @Override
             public String loadInBackground() {
+               //TODO change this string to String Builder As Carlos Said
                 String mRecipeList = "";
                 try {
                     mRecipeList = Data.getResponse(mResultUrl);
@@ -183,15 +207,17 @@ public class FragmentRecipeList extends Fragment implements RecipesListAdapter.R
     @Override
     public void onLoadFinished(android.content.Loader<String> loader, String data) {
         if(mIdlingResource != null){
+            //used in testing
             mIdlingResource.setIdleState(true);
         }
         if (data!=null){
             changeListVisibility(true);
             try {
-                List<Recipe> l = Recipe.ParseJson(data);
-                mRecipesAdapter.UpdateListOfRecipes(null,l);
+                List<Recipe> l = new Recipe().ParseJson(data);
+                mRecipesAdapter.UpdateListOfRecipes(l);
                 mRecipe = l.get(0);
                 if(dualListener != null && !rotate){
+                    //TODO try to find another solution
                     handler.sendEmptyMessage(1);
                 }
 
@@ -232,6 +258,7 @@ public class FragmentRecipeList extends Fragment implements RecipesListAdapter.R
     @NonNull
     public SimpleIdlingResource getMyIdlingResource(){
 
+        //Used In tessting
         if(mIdlingResource == null){
             Log.d("MYTEST:Fragment","Not null");
             mIdlingResource = new SimpleIdlingResource();
@@ -249,6 +276,8 @@ public class FragmentRecipeList extends Fragment implements RecipesListAdapter.R
 
 
 
+
+    //used to set fragmentDetails content to the first element in initiating Dual Mode view
         private Handler handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {

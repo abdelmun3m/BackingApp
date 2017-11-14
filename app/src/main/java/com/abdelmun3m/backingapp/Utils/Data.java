@@ -19,11 +19,16 @@ public class Data {
 
 
 
+    //build URL
     public static final URL BuildUrl(String s) throws MalformedURLException {
         URL url = new URL(s);
         return url;
     }
 
+
+
+
+    //get url and return its
     public static String getResponse(URL url) throws IOException{
         HttpURLConnection connection = null;
             connection = (HttpURLConnection) url.openConnection();
@@ -39,8 +44,7 @@ public class Data {
         return null;
     }
 
-
-
+    //check network connectivity
     public static boolean NetworkConnectivityAvailable(Context context){
         ConnectivityManager cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

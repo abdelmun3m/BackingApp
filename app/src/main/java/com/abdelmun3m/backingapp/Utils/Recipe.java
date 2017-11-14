@@ -18,10 +18,10 @@ import java.util.Map;
 
 public class Recipe implements Parcelable{
 
-    private static final String JSON_ID ="id" ;
-    private static final String JSON_NAME = "name";
-    private static final String JSON_INGREDIENTS = "ingredients";
-    private static final String JSON_STEPS = "steps";
+    private  final String JSON_ID ="id" ;
+    private  final String JSON_NAME = "name";
+    private  final String JSON_INGREDIENTS = "ingredients";
+    private  final String JSON_STEPS = "steps";
 
    public String Id ;
    public   String name;
@@ -58,7 +58,11 @@ public class Recipe implements Parcelable{
 
     }
 
-    public static List<Recipe> ParseJson(String queryResult) throws JSONException{
+
+    // get string and return List Of Recipes
+    // calls ParseJson of Ingredient JsonParse
+    //calls ParseJson of Steps JsonParse
+    public  List<Recipe> ParseJson(String queryResult) throws JSONException{
 
         List<Recipe> recipeList = new ArrayList<>();
         JSONArray result = new JSONArray(queryResult);
@@ -78,12 +82,12 @@ public class Recipe implements Parcelable{
 
             if(JsonRecipe.has(JSON_INGREDIENTS)){
 
-                temp.ingredients = Ingredient.getIngredients(JsonRecipe.getString(JSON_INGREDIENTS));
+                temp.ingredients = new Ingredient().getIngredients(JsonRecipe.getString(JSON_INGREDIENTS));
 
             }
 
             if(JsonRecipe.has(JSON_STEPS)){
-                temp.steps = Step.getSteps(JsonRecipe.getString(JSON_STEPS));
+                temp.steps = new Step().getSteps(JsonRecipe.getString(JSON_STEPS));
 
             }
             recipeList.add(temp);
