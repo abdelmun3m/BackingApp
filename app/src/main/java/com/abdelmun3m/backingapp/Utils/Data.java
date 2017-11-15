@@ -4,8 +4,10 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,16 +34,27 @@ public class Data {
     public static String getResponse(URL url) throws IOException{
         HttpURLConnection connection = null;
             connection = (HttpURLConnection) url.openConnection();
+           /*
             InputStream response = connection.getInputStream();
             Scanner scan= new Scanner(response);
             scan.useDelimiter("\\A");
-
             if(scan.hasNext()){
                 connection.disconnect();
                 return scan.next();
             }
-            connection.disconnect();
-        return null;
+
+            */
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(connection.getInputStream()));
+            StringBuilder s = new StringBuilder();
+        String inputLine;
+        while ((inputLine = in.readLine()) != null) {
+            s.append(inputLine);
+        }
+
+        in.close();
+        connection.disconnect();
+        return s.toString();
     }
 
     //check network connectivity
