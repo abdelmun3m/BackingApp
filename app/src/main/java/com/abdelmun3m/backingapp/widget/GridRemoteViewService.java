@@ -1,7 +1,6 @@
 package com.abdelmun3m.backingapp.widget;
 
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -9,6 +8,7 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.abdelmun3m.backingapp.R;
+import com.abdelmun3m.backingapp.RecipeDetails.RecipeDetailsContainer;
 import com.abdelmun3m.backingapp.Utils.Ingredient;
 import com.abdelmun3m.backingapp.Utils.Recipe;
 
@@ -18,34 +18,32 @@ import java.util.List;
  * Created by abdelmun3m on 10/11/17.
  */
 
-public class GridWidgetService extends RemoteViewsService {
+public class GridRemoteViewService extends RemoteViewsService {
 
     public static Recipe r ;
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
 
-        Log.d("Twid","ser");
-        r = WidgetIntentService.curRecipe;
-       // GridWidgetFactory gridWidgetFactory = new GridWidgetFactory(r, this);
 
-        return new GridWidgetFactory(r, this);
+        r = WidgetIntentService.curRecipe;
+        return new GridRemoteViewFactory(r, this);
 
 
     }
 }
 
 
-class GridWidgetFactory implements RemoteViewsService.RemoteViewsFactory{
+class GridRemoteViewFactory implements RemoteViewsService.RemoteViewsFactory{
 
-    static Recipe mRecipe;
+    Recipe mRecipe;
     List<Ingredient> mIngredient;
     Context mContext;
     RemoteViews views;
 
-    GridWidgetFactory(Recipe recipe,Context context){
+    GridRemoteViewFactory(Recipe recipe, Context context){
 
-        Log.d("Twid","fact");
+
         mContext = context;
         mRecipe = recipe;
         mIngredient = recipe.ingredients;
@@ -62,7 +60,8 @@ class GridWidgetFactory implements RemoteViewsService.RemoteViewsFactory{
     public void onDataSetChanged() {
 
         mRecipe = WidgetIntentService.curRecipe;
-        Log.d("Twid","chng : " + mRecipe.name);
+        mIngredient =WidgetIntentService.curRecipe.ingredients;
+
     }
 
     @Override
@@ -78,16 +77,14 @@ class GridWidgetFactory implements RemoteViewsService.RemoteViewsFactory{
 
     @Override
     public RemoteViews getViewAt(int position) {
-        Log.d("Twid","viw : " + mRecipe.name);
 
         Ingredient ing =  mIngredient.get(position);
-        views = new RemoteViews(mContext.getPackageName(), R.layout.widget_ingredient_item);
-        views.setTextViewText(R.id.tv_widget_ingredient,ing.ingredient);
-        views.setTextViewText(R.id.tv_widget_ingredient_id,ing.quantity);
-        views.setTextViewText(R.id.tv_widget_ingredient_measure,ing.measure);
 
-        Intent fillInIntent = new Intent();
-        views.setOnClickFillInIntent(R.layout.widget_ingredient_item, fillInIntent);
+      RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.ingredient_item);
+
+        views.setTextViewText(R.id.tv_ingredient,ing.ingredient);
+        views.setTextViewText(R.id.tv_ingredient_id,ing.quantity);
+        views.setTextViewText(R.id.tv_ingredient_measure,ing.measure);
 
 
         return views;

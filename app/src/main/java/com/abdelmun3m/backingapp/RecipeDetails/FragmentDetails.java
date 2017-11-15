@@ -50,7 +50,7 @@ import butterknife.OnClick;
  *
  * it can be intiated from MainActivity in tablet screen size
  *
- * it can be initiated from NewAppWidget when widget click.
+ * it can be initiated from RecipeWidgetProvider when widget click.
  *
  *
  */
@@ -297,7 +297,6 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
     @OnClick(R.id.img_favorit_button)
     public void setAsFavorite(View view) {
         setFavoriteOn(true);
-
         WidgetIntentService.UpdateWidgetRecipe(mContext, mRecipe);
     }
 
