@@ -2,11 +2,12 @@ package com.abdelmun3m.backingapp.RecipeDetails;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +15,6 @@ import android.widget.Toast;
 
 import com.abdelmun3m.backingapp.R;
 import com.abdelmun3m.backingapp.Utils.Step;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +28,7 @@ import butterknife.ButterKnife;
  *
  *
  * class that mange and display the steps of a recipe in the steps RecyclerView
- * impalement the @LayoutManager and  @StepsAdapter
+ * impalement the @LayoutManager and  @AdapterSteps
  *
  *
  * it will be called from the class @FragmentDetails
@@ -45,34 +40,89 @@ import butterknife.ButterKnife;
  *
  */
 
-public class FragmentStep extends Fragment implements StepsAdapter.StepsClickListener{
+public class FragmentStep extends Fragment implements AdapterSteps.stepListListeners{
 
     Context mContext;
     List<Step> mStepsList = new ArrayList<>();
-    SimpleExoPlayer mExoPlayer;
+   // SimpleExoPlayer mExoPlayer;
+    String videoUri = "" ;
+    //AdapterSteps.videoPlayerClickListener mVideoPlayerListener;
+    AdapterSteps adapter ;
+    RecyclerView.LayoutManager manager;
+    Parcelable StepState;
+    mFragmentDetailListeners detailListeners;
+
+
 
     @BindView(R.id.rv_step)
     RecyclerView mStepsView;
 
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_step,container,false);
-        mContext = rootView.getContext();
-        ButterKnife.bind(this,rootView);
-        setLayoutManger();
-        return rootView;
-    }
+    private final String STEPS_STATE = "stepState";
 
     public FragmentStep(){
 
     }
 
 
-    public FragmentStep(List<Step> s ,SimpleExoPlayer player){
+    public FragmentStep(List<Step> s , mFragmentDetailListeners lis){
         this.mStepsList =s;
-        this.mExoPlayer=player;
+        detailListeners=lis;
+    }
+
+    public  void  setDetailListeners(mFragmentDetailListeners lis){
+        detailListeners=lis;
+    }
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_step,container,false);
+
+        Log.d("twid","step create");
+        mContext = rootView.getContext();
+        ButterKnife.bind(this,rootView);
+        setLayoutManger();
+        return rootView;
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        Log.d("twid","step restore  : "+savedInstanceState);
+        if(savedInstanceState != null) {
+            StepState = savedInstanceState.getParcelable(STEPS_STATE);
+            mStepsList = savedInstanceState.getParcelableArrayList("sts");
+        }
+        adapter.UpdateStepsList(mStepsList);
+        //adapter.setmVideoPlayerListener(mVideoPlayerListener);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("twid","step resume");
+
+        if(manager != null){
+            manager.onRestoreInstanceState(StepState);
+        }
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("twid","step pause");
+
+    }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        /*outState.putString("uri","ss");
+        outState.putLong("position",5);*/
+         StepState = manager.onSaveInstanceState();
+         outState.putParcelable(STEPS_STATE, StepState);
+         outState.putParcelableArrayList("sts", (ArrayList<? extends Parcelable>) mStepsList);
+        Log.d("twid","step saveinstance");
     }
 
     private void setLayoutManger() {
@@ -82,9 +132,16 @@ public class FragmentStep extends Fragment implements StepsAdapter.StepsClickLis
         * and update adapter list with the passed date from RecipeDetailsContainer
         *
         * */
-        RecyclerView.LayoutManager manager =
+
+        manager =
                 new LinearLayoutManager(mContext,LinearLayoutManager.HORIZONTAL,false);
-        StepsAdapter adapter = new StepsAdapter(this);
+
+        if(StepState != null)
+        {
+            Toast.makeText(mContext, "retored", Toast.LENGTH_SHORT).show();
+            manager.onRestoreInstanceState(StepState);
+        }
+        adapter = new AdapterSteps(this);
         mStepsView.setAdapter(adapter);
         mStepsView.setLayoutManager(manager);
         mStepsView.setHasFixedSize(true);
@@ -95,50 +152,21 @@ public class FragmentStep extends Fragment implements StepsAdapter.StepsClickLis
     public void onStepClick(Step s) {
         /*
         *
-        * override from the @StepsAdapter.StepsClickListener
+        * override from the @AdapterSteps.StepsClickListener
         * to create a toast that will display the recipe description in case that
         * the content was not completely available, in it's textView
         *
         * */
-
         Toast.makeText(mContext,""+s.description, Toast.LENGTH_LONG).show();
 
     }
 
     @Override
-    public void onVideoLoadClick(Uri uri) {
-        /*
-        * override from the @StepsAdapter.StepsClickListener
-        *
-        * to handle video Icon click to load the step video into the ExoPlayer Object
-        *
-        * */
-        if(uri != null) {
-            setMediaSource(uri);
-        }
-
-
+    public void onVideoLoadClick(String uri, Boolean isImage) {
+        detailListeners.onChangePlayerVideo(uri,isImage);
     }
 
-    private void setMediaSource(Uri uri){
-
-        /*
-        *
-        * change the media Source in the ExoPlayer Object
-        *
-        * **/
-
-        String userAgent = Util.getUserAgent(mContext,"BackingApp");
-        DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(mContext, userAgent);
-        MediaSource mediaSource =
-                new ExtractorMediaSource(
-                        uri,
-                        defaultDataSourceFactory,
-                        new DefaultExtractorsFactory(),
-                        null,
-                        null);
-        mExoPlayer.prepare(mediaSource);
+    public interface mFragmentDetailListeners{
+        void onChangePlayerVideo(String uri, Boolean isImage);
     }
-
-
 }

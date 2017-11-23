@@ -3,6 +3,12 @@ package com.abdelmun3m.backingapp.Utils;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,6 +28,7 @@ public class Recipe implements Parcelable{
     private  final String JSON_NAME = "name";
     private  final String JSON_INGREDIENTS = "ingredients";
     private  final String JSON_STEPS = "steps";
+    private final String JSON_IMAGE = "image";
 
    public String Id ;
    public   String name;
@@ -30,6 +37,7 @@ public class Recipe implements Parcelable{
    public   String imageUrl;
    public   List<Ingredient> ingredients = new ArrayList<>();
    public List<Step> steps= new ArrayList<>();
+
 
 
     protected Recipe(Parcel in) {
@@ -80,6 +88,11 @@ public class Recipe implements Parcelable{
                 temp.name = JsonRecipe.getString(JSON_NAME);
             }
 
+            if(JsonRecipe.has(JSON_IMAGE)){
+
+                temp.imageUrl = JsonRecipe.getString(JSON_IMAGE);
+            }
+
             if(JsonRecipe.has(JSON_INGREDIENTS)){
 
                 temp.ingredients = new Ingredient().getIngredients(JsonRecipe.getString(JSON_INGREDIENTS));
@@ -110,6 +123,26 @@ public class Recipe implements Parcelable{
         dest.writeString(imageUrl);
         dest.writeTypedList(ingredients);
         dest.writeTypedList(steps);
+    }
+
+
+    public void loadMovieImage(String uri,ImageView im ){
+        if(uri == null || uri.equals("")){
+            return;
+        }
+        String Image_URL = uri;
+        Picasso.with(im.getContext()).load(Image_URL).error(android.R.drawable.ic_menu_gallery)
+                .into(im, new Callback() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
     }
 }
 

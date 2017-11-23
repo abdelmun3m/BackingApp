@@ -1,10 +1,7 @@
 package com.abdelmun3m.backingapp.RecipeList;
 
-import android.content.Context;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +18,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
+/*
+ *
  * Created by abdelmun3m on 21/10/17.
+ *
  */
 
 public class RecipesListAdapter extends RecyclerView.Adapter<RecipesListAdapter.RecipeViewHolder> {
@@ -78,12 +77,18 @@ public class RecipesListAdapter extends RecyclerView.Adapter<RecipesListAdapter.
         public void bind(Recipe recipe){
             mRecipename.setText(recipe.name);
 
-            if(recipe.imageId == -1){
-                recipe.imageId = chooseRecipeImage(Integer.valueOf(recipe.Id));
+            if(recipe.imageUrl == null || recipe.imageUrl.equals("")) {
+                if (recipe.imageId == -1) {
+                    recipe.imageId = chooseRecipeImage(Integer.valueOf(recipe.Id));
+                }
+
+                mRecipeImage.setImageResource(recipe.imageId);
+
+            }else{
+
+                recipe.loadMovieImage(recipe.imageUrl,mRecipeImage);
+
             }
-
-            mRecipeImage.setImageResource( recipe.imageId);
-
         }
 
         @Override

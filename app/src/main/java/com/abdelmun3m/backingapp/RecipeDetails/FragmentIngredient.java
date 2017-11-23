@@ -3,9 +3,11 @@ package com.abdelmun3m.backingapp.RecipeDetails;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,20 +42,14 @@ public class FragmentIngredient extends Fragment implements AdapterIngredient.In
 
     List<Ingredient> mIngredientList = new ArrayList<>();
 
+    RecyclerView.LayoutManager manager;
+    AdapterIngredient adapter ;
+    Parcelable ingredientState;
+
     @BindView(R.id.rv_ingredient)
     RecyclerView mIngredientView;
+    private String INGREDIENT_STATE = "ingState";
 
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-
-        View rootView = inflater.inflate(R.layout.fragment_ingredient,container,false);
-        mContext = rootView.getContext();
-        ButterKnife.bind(this,rootView);
-        setLayoutManger();
-        return rootView;
-    }
 
     public FragmentIngredient(){
     }
@@ -64,11 +60,54 @@ public class FragmentIngredient extends Fragment implements AdapterIngredient.In
     }
 
 
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+
+
+        View rootView = inflater.inflate(R.layout.fragment_ingredient,container,false);
+        mContext = rootView.getContext();
+        ButterKnife.bind(this,rootView);
+        setLayoutManger();
+        Log.d("twid","indredient create : "+ savedInstanceState);
+        return rootView;
+    }
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        Log.d("twid","ingredeitn restore" + savedInstanceState);
+        if(savedInstanceState != null) {
+            ingredientState = savedInstanceState.getParcelable(INGREDIENT_STATE);
+            mIngredientList = savedInstanceState.getParcelableArrayList("ings");
+        }
+        adapter.UpdateIngredientList(mIngredientList);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("twid","resume ingredient ");
+
+        if (manager != null){
+        manager.onRestoreInstanceState(ingredientState);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        ingredientState = manager.onSaveInstanceState();
+        outState.putParcelable(INGREDIENT_STATE, ingredientState);
+        outState.putParcelableArrayList("ings", (ArrayList<? extends Parcelable>) mIngredientList);
+        Log.d("twid","ingredient saveinstance : " );
+    }
+
+
     private void setLayoutManger() {
         //set Layout manager and Adapter
-        RecyclerView.LayoutManager manager =
+        manager =
                 new LinearLayoutManager(mContext,LinearLayoutManager.HORIZONTAL,false);
-        AdapterIngredient adapter = new AdapterIngredient(this);
+        adapter = new AdapterIngredient(this);
         mIngredientView.setAdapter(adapter);
         mIngredientView.setLayoutManager(manager);
         mIngredientView.setHasFixedSize(true);
@@ -82,4 +121,5 @@ public class FragmentIngredient extends Fragment implements AdapterIngredient.In
         */
         Toast.makeText(mContext,""+ing.ingredient, Toast.LENGTH_SHORT).show();
     }
+
 }

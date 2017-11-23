@@ -3,6 +3,7 @@ package com.abdelmun3m.backingapp.RecipeDetails;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.abdelmun3m.backingapp.MainActivity;
@@ -35,7 +36,7 @@ public class RecipeDetailsContainer extends AppCompatActivity {
         ButterKnife.bind(this);
 
 
-
+        Log.d("twid","activity created : " + savedInstanceState );
 
         //get the recipe object sellected from the user in the main page
         Intent in = getIntent();
@@ -43,8 +44,10 @@ public class RecipeDetailsContainer extends AppCompatActivity {
 
         if(mRecipe != null){
 
-            FragmentDetails mdetails = new FragmentDetails(mRecipe);
-            getFragmentManager().beginTransaction().add(R.id.mainDetails,mdetails).commit();
+            if(savedInstanceState == null) {
+                FragmentDetails mdetails = new FragmentDetails(mRecipe);
+                getFragmentManager().beginTransaction().replace(R.id.mainDetails, mdetails).commit();
+            }
 
         }else {
             Toast.makeText(this, "Null intent", Toast.LENGTH_SHORT).show();

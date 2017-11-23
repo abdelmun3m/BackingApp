@@ -7,6 +7,7 @@ import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 
@@ -26,16 +27,14 @@ public class MainActivity extends AppCompatActivity
     Recipe mRecipe ;
     boolean dualMod=false;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Log.d("twid","activity on create");
         /* defined to be used in testing to retrieve Idle Resource Variable */
-
-
-        if(findViewById(R.id.main)!= null){
+        if(findViewById(R.id.main) != null){
             /**
              *In screen size less than 600dp will create
              * Fragment that load and display the recipes to the main Activity
@@ -54,57 +53,63 @@ public class MainActivity extends AppCompatActivity
              * fragmentRecipeList to change the content of detail view according to clicked recipe
              */
             dualMod=true;
-            mMainFragment = new FragmentRecipeList(this);
-            getFragmentManager().beginTransaction().replace(R.id.dual_main_view,mMainFragment).commit();
-            //  addDetailsFragment(mRecipe);
-        }
-
-
-        if(savedInstanceState!=null && dualMod) {
-            if (savedInstanceState.containsKey(RECIPE_KEY)) {
-                this.mRecipe = (Recipe) savedInstanceState.get(RECIPE_KEY);
-                addDetailsFragment(this.mRecipe);
-                mMainFragment.rotate = true;
-
+            if(savedInstanceState == null) {
+                Log.d("twid","saved instance = null ");
+                mMainFragment = new FragmentRecipeList(this);
+                getFragmentManager().beginTransaction().replace(R.id.dual_main_view, mMainFragment,"fragm").commit();
+            }else {
+                mMainFragment =  (FragmentRecipeList) getFragmentManager().findFragmentByTag("fragm");
+                mMainFragment.setDualListener(this);
+                Log.d("twid","saved instance != null : "+mMainFragment);
             }
+
         }
+
+
 
 
 
     }
 
     @Override
-    public void changeDualModeRecipe(Recipe r) {
+    protected void onResume() {
+        super.onResume();
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(dualMod){
+            outState.putParcelable(RECIPE_KEY,this.mRecipe);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("twid","Activity onDestroy");
+    }
+
+
+    @Override
+    public  void changeDualModeRecipe(Recipe r) {
         /**
          * function that create Details fragment view according to given recipe
          *  it only works in screen size more than 600dp
          *
          * */
+        Log.d("twid","changeDualModeRecipe "+r.name);
         this.mRecipe = r;
         addDetailsFragment(r);
     }
 
     public void addDetailsFragment(Recipe r){
         if(findViewById(R.id.dual_detail_view) != null){
+            Log.d("twid","addDetailsFragment "+mDetailFragment);
             mDetailFragment = new FragmentDetails(r);
             getFragmentManager().beginTransaction().replace(R.id.dual_detail_view,mDetailFragment).commit();
         }
-
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        if(dualMod){
-            getFragmentManager().beginTransaction().remove(mDetailFragment).commit();
-            outState.putParcelable(RECIPE_KEY,this.mRecipe);
-
-        }
-        super.onSaveInstanceState(outState);
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
 }

@@ -6,19 +6,24 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.abdelmun3m.backingapp.R;
+import com.abdelmun3m.backingapp.RecipeList.FragmentRecipeList;
 import com.abdelmun3m.backingapp.Utils.Recipe;
 import com.abdelmun3m.backingapp.widget.WidgetIntentService;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -28,11 +33,16 @@ import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,7 +65,8 @@ import butterknife.OnClick;
  *
  */
 
-public class FragmentDetails extends Fragment implements ExoPlayer.EventListener {
+public class FragmentDetails extends Fragment implements ExoPlayer.EventListener,
+        FragmentStep.mFragmentDetailListeners {
 
 
 
@@ -70,11 +81,13 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
     @BindView(R.id.player_view)
     SimpleExoPlayerView myExoPlayerView;
 
-    @BindView(R.id.pb_player_progress)
-    ProgressBar mPlayerProgress;
-
     @BindView(R.id.img_favorit_button)
     ImageView mFavoriteButton;
+
+
+    @BindView(R.id.image_view)
+    ImageView imageView;
+
 
 
     //defined static couse it is used in static class MediaReceiver
@@ -87,6 +100,13 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
     private View rootView;
     private Context mContext;
 
+    long position=0;
+    String videoUri = "";
+    Parcelable state ;
+    FragmentIngredient ingredient;
+    FragmentStep steps;
+
+
 
     private SimpleExoPlayer mExoPlayer;
 
@@ -97,64 +117,119 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
         this.mRecipe = m ;
     }
 
+
     public  FragmentDetails(){
     // default instructor
+    }
+
+    public FragmentDetails(Recipe mRecipe, Parcelable parcelable) {
+        this.mRecipe = mRecipe ;
+        this.state = parcelable;
+    }
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        //get the recipe object sellected from the user in the main page
+
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
+        Log.d("twid","create details : " + savedInstanceState);
         rootView = inflater.inflate(R.layout.fragment_details,container,false);
         mContext = rootView.getContext();
-
-        //using ButterKnife Library and bind view
+        FragmentManager fragmentManager = getFragmentManager();
         ButterKnife.bind(this,rootView);
 
-        if(mRecipe ==null){
-
-            // if the object intiated with null object it will return an empty view of the fragment_details.xml
-            return rootView;
-        }
-
-
-        setFavoriteStar();
-
-
-        //set the detail Header Part
-        mRecipeName.setText(mRecipe.name);
-        mRecipeImage.setImageResource(mRecipe.imageId);
-
-
-
-        FragmentManager fragmentManager = getFragmentManager();
-
-
-
-        //ToDO Test this new Update of .add ---> .replace
-        //create fragment ingredient and pass the ingredient of the current recipe
-        FragmentIngredient ingredient = new FragmentIngredient(mRecipe.ingredients);
-        fragmentManager.beginTransaction().replace(R.id.container_ingredient,ingredient).commit();
-
-
-        //create fragment ingredient and pass the steps of the current recipe and pass exoplayer
-        FragmentStep steps = new FragmentStep(mRecipe.steps,this.mExoPlayer);
-        fragmentManager.beginTransaction().replace(R.id.container_steps,steps).commit();
-
-
         //intiate and handle videos
-        initializeMediaSession();
-        initializeMediaPlayer(mContext);
 
-        //set the default image of the Exoplayer with the recipe image displayed in the main avtivity
-        myExoPlayerView.setDefaultArtwork(BitmapFactory.decodeResource
-                (getResources(), mRecipe.imageId));
+        if(savedInstanceState != null){
+            Log.d("twid",videoUri+" " + position);
+            videoUri = savedInstanceState.getString("uri");
+            position = savedInstanceState.getLong("position");
+            ingredient = (FragmentIngredient) getFragmentManager().findFragmentByTag("fragIng");
+            steps = (FragmentStep) getFragmentManager().findFragmentByTag("fragStep");
+            steps.setDetailListeners(this);
+          //  setMediaSource(videoUri);
+        }else {
+            if(mRecipe ==null){
+                // if the object intiated with null object it will return an empty view of the fragment_details.xml
+                Toast.makeText(mContext, "a7a", Toast.LENGTH_SHORT).show();
+                return rootView;
+            }
+            Log.d("twid",videoUri+" ssss " + position);
 
+            //create fragment ingredient and pass the ingredient of the current recipe
+            ingredient = new FragmentIngredient(mRecipe.ingredients);
+            fragmentManager.beginTransaction().replace(R.id.container_ingredient, ingredient,"fragIng").commit();
 
+            //create fragment ingredient and pass the steps of the current recipe and pass exoplayer
+            steps = new FragmentStep(mRecipe.steps, this);
+            fragmentManager.beginTransaction().replace(R.id.container_steps, steps,"fragStep").commit();
 
-        return rootView;
+            setFavoriteStar();
+
+        }
+            return rootView;
+    }
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        Log.d("twid","details restore instance : "+savedInstanceState);
+        if(savedInstanceState != null) {
+            videoUri = savedInstanceState.getString("uri");
+            position = savedInstanceState.getLong("position", 0);
+            mRecipe = (Recipe) savedInstanceState.getParcelable("recipe");
+        }
     }
 
+
+    @Override
+    public void onResume() {
+        Log.d("twid","resume detail");
+        super.onResume();
+        mRecipeName.setText(mRecipe.name);
+        if(mRecipe.imageUrl == null || mRecipe.imageUrl.equals("")) {
+            mRecipeImage.setImageResource(mRecipe.imageId);
+        }else {
+
+            mRecipe.loadMovieImage(mRecipe.imageUrl,mRecipeImage);
+        }
+        initializeMediaSession();
+        initializeMediaPlayer(mContext);
+        //initializeMediaPlayer(mContext);
+        setMediaSource(videoUri);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("twid","pause detail");
+        releasePlayer();
+        if(mMediaSession != null){
+            mMediaSession.setActive(false);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("uri",videoUri);
+        outState.putLong("position",position);
+        outState.putParcelable("recipe",mRecipe);
+        Log.d("twid","details saveinstance");
+    }
+
+    @OnClick(R.id.img_favorit_button)
+    public void setAsFavorite(View view) {
+        setFavoriteOn(true);
+        WidgetIntentService.UpdateWidgetRecipe(mContext, mRecipe);
+    }
 
     private void setFavoriteStar(){
         /**
@@ -173,17 +248,22 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
         }
 
     }
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
-        //get the recipe object sellected from the user in the main page
+
+    private void setFavoriteOn(boolean favorite){
+
+
+        //change the star image according to widget recipe and current recipe
+      /*  if(favorite){
+            mFavoriteButton.setImageResource(android.R.drawable.star_big_on);
+        }else {
+            mFavoriteButton.setImageResource(android.R.drawable.star_big_off);
+        }*/
+
+        mFavoriteButton.setImageResource(favorite ? android.R.drawable.star_big_on : android.R.drawable.star_big_off);
 
     }
-
-
     private void initializeMediaPlayer(Context context) {
-
         // set Exoplayer Controllers
         if(mExoPlayer == null){
             TrackSelector selector = new DefaultTrackSelector();
@@ -211,7 +291,9 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
                 .setActions(
                         PlaybackStateCompat.ACTION_PLAY |
                                 PlaybackStateCompat.ACTION_PAUSE |
-                                PlaybackStateCompat.ACTION_PLAY_PAUSE);
+                                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS|
+                                PlaybackStateCompat.ACTION_PLAY_PAUSE
+                                );
 
         mMediaSession.setPlaybackState(mStateBuilder.build());
 
@@ -237,9 +319,7 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
     @Override
     public void onLoadingChanged(boolean isLoading) {
         //TODO Controle ProgressPar in Playing Videos
-        if(!isLoading){
-            mPlayerProgress.setVisibility(View.GONE);
-        }
+
     }
 
     @Override
@@ -250,9 +330,10 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
         } else if((playbackState == ExoPlayer.STATE_READY)){
             mStateBuilder.setState(PlaybackStateCompat.STATE_PAUSED,
                     mExoPlayer.getCurrentPosition(), 1f);
+        }else {
+
         }
         mMediaSession.setPlaybackState(mStateBuilder.build());
-
     }
 
     @Override
@@ -266,51 +347,74 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
     }
     private void releasePlayer() {
         if(mExoPlayer != null){
+            position = mExoPlayer.getCurrentPosition();
             mExoPlayer.stop();
             mExoPlayer.release();
             mExoPlayer = null;
         }
 
     }
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        releasePlayer();
-        if(mMediaSession != null){
-            mMediaSession.setActive(false);
-        }
 
+
+    private void setMediaSource(String uri){
+        /*
+        *
+        * change the media Source in the ExoPlayer Object
+        *
+        * **/
+        if(mExoPlayer != null) {
+            Log.d("twid","set video  " + uri);
+            Uri mURi = Uri.parse(uri).buildUpon().build();
+            String userAgent = Util.getUserAgent(mContext, "BackingApp");
+            DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(mContext, userAgent);
+            MediaSource mediaSource =
+                    new ExtractorMediaSource(
+                            mURi,
+                            defaultDataSourceFactory,
+                            new DefaultExtractorsFactory(),
+                            null,
+                            null);
+            mExoPlayer.seekTo(position);
+            mExoPlayer.prepare(mediaSource);
+        }
+    }
+
+    @Override
+    public void onChangePlayerVideo(String uri, Boolean isImage) {
+        Log.d("twid","click "+uri);
+        if(uri != null && !isImage) {
+
+            myExoPlayerView.setVisibility(View.VISIBLE);
+            imageView.setVisibility(View.GONE);
+            videoUri = uri;
+            setMediaSource(uri);
+        }
+        else if(uri != null&&isImage){
+            myExoPlayerView.setVisibility(View.GONE);
+            imageView.setVisibility(View.VISIBLE);
+            mRecipe.loadMovieImage(uri,imageView);
+        }
     }
 
     private class MySessionCallback extends MediaSessionCompat.Callback {
         @Override
         public void onPlay() {
+            Log.d("twid","1");
             mExoPlayer.setPlayWhenReady(true);
         }
 
         @Override
         public void onPause() {
+            Log.d("twid","2");
             mExoPlayer.setPlayWhenReady(false);
         }
-    }
-
-    @OnClick(R.id.img_favorit_button)
-    public void setAsFavorite(View view) {
-        setFavoriteOn(true);
-        WidgetIntentService.UpdateWidgetRecipe(mContext, mRecipe);
-    }
 
 
-    private void setFavoriteOn(boolean favorite){
-
-
-        //change the star image according to widget recipe and current recipe
-        if(favorite){
-            mFavoriteButton.setImageResource(android.R.drawable.star_big_on);
-        }else {
-            mFavoriteButton.setImageResource(android.R.drawable.star_big_off);
+        @Override
+        public void onSkipToPrevious() {
+            Log.d("twid","3");
+            mExoPlayer.seekTo(0);
         }
-
     }
 
 

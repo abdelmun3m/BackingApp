@@ -33,6 +33,8 @@ public class AdapterIngredient extends RecyclerView.Adapter<AdapterIngredient.In
 
     IngredientClickListener mIngredientListener = null;
 
+    int position ;
+
     public AdapterIngredient(IngredientClickListener listenr){
         this.mIngredientListener = listenr;
     }
@@ -77,6 +79,7 @@ public class AdapterIngredient extends RecyclerView.Adapter<AdapterIngredient.In
             super(itemView);
             itemView.setOnClickListener(this);
             ButterKnife.bind(this,itemView);
+            position=getAdapterPosition();
         }
 
         public void OnBind(int position){
@@ -95,6 +98,10 @@ public class AdapterIngredient extends RecyclerView.Adapter<AdapterIngredient.In
     }
 
 
+
+    public int getCurrentPosition(){
+     return position;
+    }
     // interface to handel ingredient click
     public interface IngredientClickListener{
         void OnIngredientClick(Ingredient ing);
