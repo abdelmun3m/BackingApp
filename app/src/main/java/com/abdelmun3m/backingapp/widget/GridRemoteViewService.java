@@ -20,7 +20,7 @@ import java.util.List;
 
 public class GridRemoteViewService extends RemoteViewsService {
 
-    public static Recipe r ;
+    public static Recipe r;
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
@@ -34,14 +34,14 @@ public class GridRemoteViewService extends RemoteViewsService {
 }
 
 
-class GridRemoteViewFactory implements RemoteViewsService.RemoteViewsFactory{
+class GridRemoteViewFactory implements RemoteViewsService.RemoteViewsFactory {
 
     Recipe mRecipe;
     List<Ingredient> mIngredient;
     Context mContext;
     RemoteViews views;
 
-    GridRemoteViewFactory(Recipe recipe, Context context){
+    GridRemoteViewFactory(Recipe recipe, Context context) {
 
 
         mContext = context;
@@ -60,7 +60,7 @@ class GridRemoteViewFactory implements RemoteViewsService.RemoteViewsFactory{
     public void onDataSetChanged() {
 
         mRecipe = WidgetIntentService.curRecipe;
-        mIngredient =WidgetIntentService.curRecipe.ingredients;
+        mIngredient = WidgetIntentService.curRecipe.ingredients;
 
     }
 
@@ -71,27 +71,29 @@ class GridRemoteViewFactory implements RemoteViewsService.RemoteViewsFactory{
 
     @Override
     public int getCount() {
-        if(mIngredient != null) return mIngredient.size();
+        if (mIngredient != null) return mIngredient.size();
         return 0;
     }
 
     @Override
     public RemoteViews getViewAt(int position) {
 
-        Ingredient ing =  mIngredient.get(position);
+        Ingredient ing = mIngredient.get(position);
 
-      RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.ingredient_item);
+        RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.ingredient_item);
 
-        views.setTextViewText(R.id.tv_ingredient,ing.ingredient);
-        views.setTextViewText(R.id.tv_ingredient_id,ing.quantity);
-        views.setTextViewText(R.id.tv_ingredient_measure,ing.measure);
+        views.setTextViewText(R.id.tv_ingredient, ing.ingredient);
+        views.setTextViewText(R.id.tv_ingredient_id, ing.quantity);
+        views.setTextViewText(R.id.tv_ingredient_measure, ing.measure);
 
 
         return views;
     }
 
     @Override
-    public RemoteViews getLoadingView() {return null;}
+    public RemoteViews getLoadingView() {
+        return null;
+    }
 
     @Override
     public int getViewTypeCount() {

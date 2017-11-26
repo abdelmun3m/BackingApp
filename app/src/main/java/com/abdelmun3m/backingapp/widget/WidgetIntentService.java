@@ -18,8 +18,8 @@ import com.abdelmun3m.backingapp.Utils.Recipe;
 public class WidgetIntentService extends IntentService {
 
 
-    public static final String CHANGE_INGREDIENT_ACTION  = "change_ingredient";
-    public static final String Recipe_KEY  = "change_ingredient";
+    public static final String CHANGE_INGREDIENT_ACTION = "change_ingredient";
+    public static final String Recipe_KEY = "change_ingredient";
     public static Recipe curRecipe;
 
 
@@ -29,35 +29,35 @@ public class WidgetIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        if(intent == null) return;
+        if (intent == null) return;
 
-        String action  =intent.getAction();
+        String action = intent.getAction();
 
-        if(action.equals(CHANGE_INGREDIENT_ACTION)){
-            UpdateWidgetIngredient(this,null);
+        if (action.equals(CHANGE_INGREDIENT_ACTION)) {
+            UpdateWidgetIngredient(this, null);
         }
     }
 
-    public  void UpdateWidgetIngredient(Context context,Recipe m) {
+    public void UpdateWidgetIngredient(Context context, Recipe m) {
 
         AppWidgetManager manger;
         RemoteViews views;
         views = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
 
         manger = AppWidgetManager.getInstance(context);
-        int[] ids = manger.getAppWidgetIds(new ComponentName(context,RecipeWidgetProvider.class));
+        int[] ids = manger.getAppWidgetIds(new ComponentName(context, RecipeWidgetProvider.class));
 
-        Intent gridIntent = new Intent(this,GridRemoteViewService.class);
+        Intent gridIntent = new Intent(this, GridRemoteViewService.class);
         views.setRemoteAdapter(R.id.widget_gred, gridIntent);
 
 
-        manger.notifyAppWidgetViewDataChanged(ids,R.id.widget_gred);
-        RecipeWidgetProvider.UpdateWidgetRecipe(context,manger,ids,views);
+        manger.notifyAppWidgetViewDataChanged(ids, R.id.widget_gred);
+        RecipeWidgetProvider.UpdateWidgetRecipe(context, manger, ids, views);
 
     }
 
 
-    public static void UpdateWidgetRecipe(Context context , Recipe r){
+    public static void UpdateWidgetRecipe(Context context, Recipe r) {
 
 
 
@@ -67,7 +67,7 @@ public class WidgetIntentService extends IntentService {
         */
         curRecipe = r;
 
-        Intent intent = new Intent(context,WidgetIntentService.class);
+        Intent intent = new Intent(context, WidgetIntentService.class);
 
         intent.setAction(WidgetIntentService.CHANGE_INGREDIENT_ACTION);
 

@@ -50,27 +50,24 @@ import butterknife.OnClick;
 
 /**
  * Created by abdelmun3m on 07/11/17.
- *
+ * <p>
  * FragmentDetails Class is a class for the Details fragment
  * which displayed in the Details Activity
- *
+ * <p>
  * it accepts a Recipe Object as parameter to display its data
- *
+ * <p>
  * it can be initiated  from IngredientDetailsContainer when click on recipe.
- *
+ * <p>
  * it can be intiated from MainActivity in tablet screen size
- *
+ * <p>
  * it can be initiated from RecipeWidgetProvider when widget click.
- *
- *
  */
 
 public class FragmentDetails extends Fragment implements ExoPlayer.EventListener,
         FragmentStep.mFragmentDetailListeners {
 
 
-
-    private final java.lang.String TAG = "RecipeDetailsContainer" ;
+    private final java.lang.String TAG = "RecipeDetailsContainer";
 
     @BindView(R.id.tv_detail_recipe_name)
     TextView mRecipeName;
@@ -89,7 +86,6 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
     ImageView imageView;
 
 
-
     //defined static couse it is used in static class MediaReceiver
     private static MediaSessionCompat mMediaSession;
 
@@ -100,12 +96,11 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
     private View rootView;
     private Context mContext;
 
-    long position=0;
+    long position = 0;
     String videoUri = "";
-    Parcelable state ;
+    Parcelable state;
     FragmentIngredient ingredient;
     FragmentStep steps;
-
 
 
     private SimpleExoPlayer mExoPlayer;
@@ -114,16 +109,16 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
         /**
          * Constructor to intiate the fragment ant set Recipe
          * */
-        this.mRecipe = m ;
+        this.mRecipe = m;
     }
 
 
-    public  FragmentDetails(){
-    // default instructor
+    public FragmentDetails() {
+        // default instructor
     }
 
     public FragmentDetails(Recipe mRecipe, Parcelable parcelable) {
-        this.mRecipe = mRecipe ;
+        this.mRecipe = mRecipe;
         this.state = parcelable;
     }
 
@@ -140,65 +135,61 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
-        Log.d("twid","create details : " + savedInstanceState);
-        rootView = inflater.inflate(R.layout.fragment_details,container,false);
+        rootView = inflater.inflate(R.layout.fragment_details, container, false);
         mContext = rootView.getContext();
         FragmentManager fragmentManager = getFragmentManager();
-        ButterKnife.bind(this,rootView);
+        ButterKnife.bind(this, rootView);
 
         //intiate and handle videos
 
-        if(savedInstanceState != null){
-            Log.d("twid",videoUri+" " + position);
-            videoUri = savedInstanceState.getString("uri");
-            position = savedInstanceState.getLong("position");
-            ingredient = (FragmentIngredient) getFragmentManager().findFragmentByTag("fragIng");
-            steps = (FragmentStep) getFragmentManager().findFragmentByTag("fragStep");
+        if (savedInstanceState != null) {
+            videoUri = savedInstanceState.getString(getString(R.string.uri));
+            position = savedInstanceState.getLong(getString(R.string.position));
+            ingredient = (FragmentIngredient) getFragmentManager().findFragmentByTag(getString(R.string.ingredient_fragment));
+            steps = (FragmentStep) getFragmentManager().findFragmentByTag(getString(R.string.step_fragment));
             steps.setDetailListeners(this);
-          //  setMediaSource(videoUri);
-        }else {
-            if(mRecipe ==null){
+            //  setMediaSource(videoUri);
+        } else {
+            if (mRecipe == null) {
                 // if the object intiated with null object it will return an empty view of the fragment_details.xml
-                Toast.makeText(mContext, "a7a", Toast.LENGTH_SHORT).show();
                 return rootView;
             }
-            Log.d("twid",videoUri+" ssss " + position);
 
             //create fragment ingredient and pass the ingredient of the current recipe
             ingredient = new FragmentIngredient(mRecipe.ingredients);
-            fragmentManager.beginTransaction().replace(R.id.container_ingredient, ingredient,"fragIng").commit();
+            fragmentManager.beginTransaction().replace(R.id.container_ingredient, ingredient, getString(R.string.ingredient_fragment)).commit();
 
             //create fragment ingredient and pass the steps of the current recipe and pass exoplayer
             steps = new FragmentStep(mRecipe.steps, this);
-            fragmentManager.beginTransaction().replace(R.id.container_steps, steps,"fragStep").commit();
+            fragmentManager.beginTransaction().replace(R.id.container_steps, steps, getString(R.string.step_fragment)).commit();
 
             setFavoriteStar();
 
         }
-            return rootView;
+        return rootView;
     }
+
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        Log.d("twid","details restore instance : "+savedInstanceState);
-        if(savedInstanceState != null) {
-            videoUri = savedInstanceState.getString("uri");
-            position = savedInstanceState.getLong("position", 0);
-            mRecipe = (Recipe) savedInstanceState.getParcelable("recipe");
+
+        if (savedInstanceState != null) {
+            videoUri = savedInstanceState.getString(getString(R.string.uri));
+            position = savedInstanceState.getLong(getString(R.string.position), 0);
+            mRecipe = (Recipe) savedInstanceState.getParcelable(getString(R.string.recipe));
         }
     }
 
 
     @Override
     public void onResume() {
-        Log.d("twid","resume detail");
         super.onResume();
         mRecipeName.setText(mRecipe.name);
-        if(mRecipe.imageUrl == null || mRecipe.imageUrl.equals("")) {
+        if (mRecipe.imageUrl == null || mRecipe.imageUrl.equals("")) {
             mRecipeImage.setImageResource(mRecipe.imageId);
-        }else {
+        } else {
 
-            mRecipe.loadMovieImage(mRecipe.imageUrl,mRecipeImage);
+            mRecipe.loadMovieImage(mRecipe.imageUrl, mRecipeImage);
         }
         initializeMediaSession();
         initializeMediaPlayer(mContext);
@@ -209,9 +200,8 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
     @Override
     public void onPause() {
         super.onPause();
-        Log.d("twid","pause detail");
         releasePlayer();
-        if(mMediaSession != null){
+        if (mMediaSession != null) {
             mMediaSession.setActive(false);
         }
     }
@@ -219,10 +209,9 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("uri",videoUri);
-        outState.putLong("position",position);
-        outState.putParcelable("recipe",mRecipe);
-        Log.d("twid","details saveinstance");
+        outState.putString(getString(R.string.uri), videoUri);
+        outState.putLong(getString(R.string.position), position);
+        outState.putParcelable(getString(R.string.recipe), mRecipe);
     }
 
     @OnClick(R.id.img_favorit_button)
@@ -231,7 +220,7 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
         WidgetIntentService.UpdateWidgetRecipe(mContext, mRecipe);
     }
 
-    private void setFavoriteStar(){
+    private void setFavoriteStar() {
         /**
          *
          * this function check the Recipe Used in the Widget to
@@ -240,35 +229,28 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
 
 
         String mFavoriteRecipeId = WidgetIntentService.curRecipe != null ?
-                WidgetIntentService.curRecipe.Id:"";
-        if(mFavoriteRecipeId != null && mFavoriteRecipeId.equals(mRecipe.Id)){
+                WidgetIntentService.curRecipe.Id : "";
+        if (mFavoriteRecipeId != null && mFavoriteRecipeId.equals(mRecipe.Id)) {
             setFavoriteOn(true);
-        }else{
+        } else {
             setFavoriteOn(false);
         }
 
     }
 
 
-    private void setFavoriteOn(boolean favorite){
-
-
-        //change the star image according to widget recipe and current recipe
-      /*  if(favorite){
-            mFavoriteButton.setImageResource(android.R.drawable.star_big_on);
-        }else {
-            mFavoriteButton.setImageResource(android.R.drawable.star_big_off);
-        }*/
+    private void setFavoriteOn(boolean favorite) {
 
         mFavoriteButton.setImageResource(favorite ? android.R.drawable.star_big_on : android.R.drawable.star_big_off);
 
     }
+
     private void initializeMediaPlayer(Context context) {
         // set Exoplayer Controllers
-        if(mExoPlayer == null){
+        if (mExoPlayer == null) {
             TrackSelector selector = new DefaultTrackSelector();
             LoadControl control = new DefaultLoadControl();
-            mExoPlayer = ExoPlayerFactory.newSimpleInstance(context,selector,control);
+            mExoPlayer = ExoPlayerFactory.newSimpleInstance(context, selector, control);
             myExoPlayerView.setPlayer(mExoPlayer);
         }
     }
@@ -291,9 +273,9 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
                 .setActions(
                         PlaybackStateCompat.ACTION_PLAY |
                                 PlaybackStateCompat.ACTION_PAUSE |
-                                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS|
+                                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
                                 PlaybackStateCompat.ACTION_PLAY_PAUSE
-                                );
+                );
 
         mMediaSession.setPlaybackState(mStateBuilder.build());
 
@@ -324,13 +306,13 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        if((playbackState == ExoPlayer.STATE_READY) && playWhenReady){
+        if ((playbackState == ExoPlayer.STATE_READY) && playWhenReady) {
             mStateBuilder.setState(PlaybackStateCompat.STATE_PLAYING,
                     mExoPlayer.getCurrentPosition(), 1f);
-        } else if((playbackState == ExoPlayer.STATE_READY)){
+        } else if ((playbackState == ExoPlayer.STATE_READY)) {
             mStateBuilder.setState(PlaybackStateCompat.STATE_PAUSED,
                     mExoPlayer.getCurrentPosition(), 1f);
-        }else {
+        } else {
 
         }
         mMediaSession.setPlaybackState(mStateBuilder.build());
@@ -345,8 +327,9 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
     public void onPositionDiscontinuity() {
 
     }
+
     private void releasePlayer() {
-        if(mExoPlayer != null){
+        if (mExoPlayer != null) {
             position = mExoPlayer.getCurrentPosition();
             mExoPlayer.stop();
             mExoPlayer.release();
@@ -356,14 +339,13 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
     }
 
 
-    private void setMediaSource(String uri){
+    private void setMediaSource(String uri) {
         /*
         *
         * change the media Source in the ExoPlayer Object
         *
         * **/
-        if(mExoPlayer != null) {
-            Log.d("twid","set video  " + uri);
+        if (mExoPlayer != null) {
             Uri mURi = Uri.parse(uri).buildUpon().build();
             String userAgent = Util.getUserAgent(mContext, "BackingApp");
             DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(mContext, userAgent);
@@ -381,38 +363,35 @@ public class FragmentDetails extends Fragment implements ExoPlayer.EventListener
 
     @Override
     public void onChangePlayerVideo(String uri, Boolean isImage) {
-        Log.d("twid","click "+uri);
-        if(uri != null && !isImage) {
+        if (uri != null && !isImage) {
 
             myExoPlayerView.setVisibility(View.VISIBLE);
             imageView.setVisibility(View.GONE);
             videoUri = uri;
             setMediaSource(uri);
-        }
-        else if(uri != null&&isImage){
+        } else if (uri != null && isImage) {
             myExoPlayerView.setVisibility(View.GONE);
             imageView.setVisibility(View.VISIBLE);
-            mRecipe.loadMovieImage(uri,imageView);
+            mRecipe.loadMovieImage(uri, imageView);
         }
     }
 
     private class MySessionCallback extends MediaSessionCompat.Callback {
         @Override
         public void onPlay() {
-            Log.d("twid","1");
+
             mExoPlayer.setPlayWhenReady(true);
         }
 
         @Override
         public void onPause() {
-            Log.d("twid","2");
+
             mExoPlayer.setPlayWhenReady(false);
         }
 
 
         @Override
         public void onSkipToPrevious() {
-            Log.d("twid","3");
             mExoPlayer.seekTo(0);
         }
     }

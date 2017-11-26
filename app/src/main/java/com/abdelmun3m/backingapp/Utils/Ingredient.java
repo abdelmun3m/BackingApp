@@ -14,12 +14,12 @@ import java.util.List;
  * Created by abdelmun3m on 21/10/17.
  */
 
-public class Ingredient implements Parcelable{
+public class Ingredient implements Parcelable {
 
-    private  final String JSON_QUANTITY = "quantity";
-    private  final String JSON_MEASURE = "measure";
-    private  final String JSON_INGREDIENT = "ingredient";
-    public int id ;
+    private final String JSON_QUANTITY = "quantity";
+    private final String JSON_MEASURE = "measure";
+    private final String JSON_INGREDIENT = "ingredient";
+    public int id;
     public String quantity;
     public String measure;
     public String ingredient;
@@ -50,25 +50,25 @@ public class Ingredient implements Parcelable{
 
 
     // get String and Parse to Ingredient List
-    public  List<Ingredient> getIngredients(String string_steps) throws JSONException {
+    public List<Ingredient> getIngredients(String string_steps) throws JSONException {
         List<Ingredient> ingredientList = new ArrayList<>();
 
         JSONArray steps = new JSONArray(string_steps);
 
-        for (int i = 0 ; i < steps.length();i++){
+        for (int i = 0; i < steps.length(); i++) {
             JSONObject JsonIngredient = steps.getJSONObject(i);
 
             Ingredient temp = new Ingredient();
             temp.id = i;
-            if(JsonIngredient.has(JSON_QUANTITY)){
+            if (JsonIngredient.has(JSON_QUANTITY)) {
                 temp.quantity = JsonIngredient.getString(JSON_QUANTITY);
             }
 
-            if(JsonIngredient.has(JSON_MEASURE)){
+            if (JsonIngredient.has(JSON_MEASURE)) {
                 temp.measure = JsonIngredient.getString(JSON_MEASURE);
             }
 
-            if(JsonIngredient.has(JSON_INGREDIENT)){
+            if (JsonIngredient.has(JSON_INGREDIENT)) {
                 temp.ingredient = JsonIngredient.getString(JSON_INGREDIENT);
             }
 

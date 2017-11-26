@@ -15,11 +15,17 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RecipeDetails.RecipeDetailsContainer"></activity>
+        <activity
+            android:name=".RecipeDetails.RecipeDetailsContainer"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+
+        </activity>
 
         <receiver android:name=".widget.RecipeWidgetProvider">
             <intent-filter>
@@ -35,8 +41,7 @@
         <service
             android:name=".widget.GridRemoteViewService"
             android:permission="android.permission.BIND_REMOTEVIEWS"
-            android:exported="false"
-            />
+            android:exported="false" />
 
         <service android:name=".widget.WidgetIntentService">
 

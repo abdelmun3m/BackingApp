@@ -37,7 +37,7 @@ import static org.hamcrest.Matchers.anything;
 @RunWith(AndroidJUnit4.class)
 public class MainRecipeAdapterTest {
 
-    public static final String  recipe = "Nutella Pie";
+    public static final String recipe = "Nutella Pie";
     private static final String TAG = "MYTEST";
 
     private IdlingResource mIdlingResource;
@@ -48,18 +48,18 @@ public class MainRecipeAdapterTest {
 
 
     @Before
-    public void getIdeaResource(){
+    public void getIdeaResource() {
 
-       // myTest.launchActivity(null);
+        // myTest.launchActivity(null);
         mIdlingResource = myTest.getActivity().mMainFragment.getMyIdlingResource();
 
-        if(mIdlingResource != null){
+        if (mIdlingResource != null) {
 
             Espresso.registerIdlingResources(mIdlingResource);
 
-        }else {
+        } else {
 
-            Log.d(TAG,"Resource Idelling is Null");
+            Log.d(TAG, "Resource Idelling is Null");
 
         }
 
@@ -67,7 +67,7 @@ public class MainRecipeAdapterTest {
 
 
     @Test
-    public void clickRecipeListAdapterItemSelectionTest(){
+    public void clickRecipeListAdapterItemSelectionTest() {
         onView(withId(R.id.rv_recipes))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0,
                         click()));
@@ -75,9 +75,9 @@ public class MainRecipeAdapterTest {
     }
 
     @After
-    public void unregistResource(){
-        if(mIdlingResource != null){
-        Espresso.unregisterIdlingResources(mIdlingResource);
+    public void unregistResource() {
+        if (mIdlingResource != null) {
+            Espresso.unregisterIdlingResources(mIdlingResource);
         }
     }
 }

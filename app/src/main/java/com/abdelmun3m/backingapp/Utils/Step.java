@@ -14,8 +14,7 @@ import java.util.List;
  * Created by abdelmun3m on 21/10/17.
  */
 
-public class Step implements Parcelable{
-
+public class Step implements Parcelable {
 
 
     public int id;
@@ -24,10 +23,10 @@ public class Step implements Parcelable{
     public String videoURL;
     public String thumbnailURL;
 
-    public  final String SHORT_DESCRIPTION ="shortDescription";
-    public  final String DESCRIPTION ="description";
-    public  final String VIDEO_URL ="videoURL";
-    public  final String THUMBNAIL_URL ="thumbnailURL";
+    public final String SHORT_DESCRIPTION = "shortDescription";
+    public final String DESCRIPTION = "description";
+    public final String VIDEO_URL = "videoURL";
+    public final String THUMBNAIL_URL = "thumbnailURL";
 
 
     protected Step(Parcel in) {
@@ -55,29 +54,29 @@ public class Step implements Parcelable{
     }
 
     // get String and Parse to step List
-    public  List<Step> getSteps(String stringSteps) throws JSONException{
+    public List<Step> getSteps(String stringSteps) throws JSONException {
 
         List<Step> stepsList = new ArrayList<>();
 
         JSONArray steps = new JSONArray(stringSteps);
 
-        for (int i = 0 ; i < steps.length();i++){
+        for (int i = 0; i < steps.length(); i++) {
             JSONObject JsonStep = steps.getJSONObject(i);
             Step temp = new Step();
 
-            if(JsonStep.has(SHORT_DESCRIPTION)){
+            if (JsonStep.has(SHORT_DESCRIPTION)) {
                 temp.shortDescription = JsonStep.getString(SHORT_DESCRIPTION);
             }
 
-            if(JsonStep.has(DESCRIPTION)){
+            if (JsonStep.has(DESCRIPTION)) {
                 temp.description = JsonStep.getString(DESCRIPTION);
             }
 
-            if(JsonStep.has(VIDEO_URL)){
+            if (JsonStep.has(VIDEO_URL)) {
                 temp.videoURL = JsonStep.getString(VIDEO_URL);
             }
 
-            if (JsonStep.has(THUMBNAIL_URL)){
+            if (JsonStep.has(THUMBNAIL_URL)) {
                 temp.thumbnailURL = JsonStep.getString(THUMBNAIL_URL);
             }
 

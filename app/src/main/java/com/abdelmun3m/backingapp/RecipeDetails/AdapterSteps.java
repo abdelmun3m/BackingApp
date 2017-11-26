@@ -1,8 +1,7 @@
 package com.abdelmun3m.backingapp.RecipeDetails;
 
-import android.net.Uri;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,6 @@ import android.widget.TextView;
 
 import com.abdelmun3m.backingapp.R;
 import com.abdelmun3m.backingapp.Utils.Step;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,27 +27,23 @@ public class AdapterSteps extends RecyclerView.Adapter<AdapterSteps.StepsViewHol
 
     List<Step> mStepsList = new ArrayList<>();
     stepListListeners mFragmentStepListener = null;
-   // videoPlayerClickListener mVideoPlayerListener ;
+
     Boolean isImage = false;
 
 
-    public AdapterSteps(stepListListeners listener){
+    public AdapterSteps(stepListListeners listener) {
         mFragmentStepListener = listener;
     }
 
 
-    public void UpdateStepsList(List<Step> newStepList){
+    public void UpdateStepsList(List<Step> newStepList) {
         this.mStepsList = newStepList;
         notifyDataSetChanged();
     }
 
-    public void setmFragmentStepListener(stepListListeners lis){
-     mFragmentStepListener = lis;
-    }
-
     @Override
     public StepsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.step_item,parent,false);
+        View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.step_item, parent, false);
         StepsViewHolder mViewHolder = new StepsViewHolder(mView);
         return mViewHolder;
     }
@@ -69,7 +63,8 @@ public class AdapterSteps extends RecyclerView.Adapter<AdapterSteps.StepsViewHol
 
     {
 
-        Step s=null;
+        Step s = null;
+        Context context;
 
         @BindView(R.id.tv_step_short_description)
         TextView mRecipeShortDescription;
@@ -83,69 +78,63 @@ public class AdapterSteps extends RecyclerView.Adapter<AdapterSteps.StepsViewHol
 
         public StepsViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this,itemView);
+            ButterKnife.bind(this, itemView);
             mRecipetDescription.setOnClickListener(this);
+            context = itemView.getContext();
         }
 
-        public void OnBind(int position){
+        public void OnBind(int position) {
             s = mStepsList.get(position);
             mRecipeShortDescription.setText(s.shortDescription.trim());
             mRecipetDescription.setText(s.description);
 
             //Function To Hide the the video Play Button if both videoURL Ond thumbnailURL is empty
-            if(s.videoURL.equals("") || s.videoURL == null){
-                   // mPlayerButton.setVisibility(View.INVISIBLE);
-                if(s.thumbnailURL.equals("") || s.thumbnailURL == null){
-                   mPlayerButton.setVisibility(View.INVISIBLE);
-                }else  if(s.thumbnailURL.endsWith(".mp4") || s.thumbnailURL.endsWith(".mp3")) {
+            if (s.videoURL.equals("") || s.videoURL == null) {
+                if (s.thumbnailURL.equals("") || s.thumbnailURL == null) {
                     mPlayerButton.setVisibility(View.INVISIBLE);
-                }else {
+                } else if (s.thumbnailURL.endsWith(context.getString(R.string.vedio_mp4))
+                        || s.thumbnailURL.endsWith(context.getString(R.string.vedio_mp3))) {
+                    mPlayerButton.setVisibility(View.INVISIBLE);
+                } else {
 
                     isImage = true;
                 }
-            }
-
-            /*if(s.thumbnailURL.equals("") || s.thumbnailURL == null){
-                mPlayerButton.setVisibility(View.INVISIBLE);
-            }else if(s.thumbnailURL.endsWith(".mp4") || s.thumbnailURL.endsWith(".mp3")) {
-                mPlayerButton.setVisibility(View.INVISIBLE);
-            }else {
+            } else {
                 mPlayerButton.setVisibility(View.VISIBLE);
-            }*/
-
+            }
 
         }
 
         @Override
         public void onClick(View v) {
-            if(v.getId() == mRecipetDescription.getId()){
+            if (v.getId() == mRecipetDescription.getId()) {
                 mFragmentStepListener.onStepClick(mStepsList.get(getAdapterPosition()));
             }
         }
 
         @OnClick(R.id.btn_play)
-        public void LoadStepVideo(View v){
+        public void LoadStepVideo(View v) {
 
             //Function To load the the video URI to ExoPlayer from Recipe  videoURL Or thumbnailURL
             String uri = null;
 
-           if(!s.videoURL.equals("") && s.videoURL != null){
-                uri =s.videoURL;
+            if (!s.videoURL.equals("") && s.videoURL != null) {
+                uri = s.videoURL;
                 isImage = false;
-            }else if(!s.thumbnailURL.equals("") && s.thumbnailURL != null && isImage){
+            } else if (!s.thumbnailURL.equals("") && s.thumbnailURL != null && isImage) {
                 uri = s.thumbnailURL;
             }
-            mFragmentStepListener.onVideoLoadClick(uri,isImage);
-          //  mVideoPlayerListener.onVideoLoadClick(uri,isImage);
+            mFragmentStepListener.onVideoLoadClick(uri, isImage);
+            //  mVideoPlayerListener.onVideoLoadClick(uri,isImage);
         }
 
     }
 
 
-
     public interface stepListListeners {
         //on step click create Toast
         void onStepClick(Step s);
+
         void onVideoLoadClick(String uri, Boolean isImage);
 
     }

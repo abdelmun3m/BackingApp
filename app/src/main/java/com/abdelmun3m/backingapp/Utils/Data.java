@@ -20,7 +20,6 @@ import java.util.Scanner;
 public class Data {
 
 
-
     //build URL
     public static final URL BuildUrl(String s) throws MalformedURLException {
         URL url = new URL(s);
@@ -28,12 +27,10 @@ public class Data {
     }
 
 
-
-
     //get url and return its
-    public static String getResponse(URL url) throws IOException{
+    public static String getResponse(URL url) throws IOException {
         HttpURLConnection connection = null;
-            connection = (HttpURLConnection) url.openConnection();
+        connection = (HttpURLConnection) url.openConnection();
            /*
             InputStream response = connection.getInputStream();
             Scanner scan= new Scanner(response);
@@ -46,7 +43,7 @@ public class Data {
             */
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(connection.getInputStream()));
-            StringBuilder s = new StringBuilder();
+        StringBuilder s = new StringBuilder();
         String inputLine;
         while ((inputLine = in.readLine()) != null) {
             s.append(inputLine);
@@ -58,10 +55,10 @@ public class Data {
     }
 
     //check network connectivity
-    public static boolean NetworkConnectivityAvailable(Context context){
+    public static boolean NetworkConnectivityAvailable(Context context) {
         ConnectivityManager cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo info =  cm.getActiveNetworkInfo();
+        NetworkInfo info = cm.getActiveNetworkInfo();
         return info != null && info.isConnectedOrConnecting();
     }
 }

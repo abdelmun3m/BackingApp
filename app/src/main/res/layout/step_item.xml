@@ -16,8 +16,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:id="@+id/step_header"
-        >
+        android:id="@+id/step_header">
+
         <TextView
             android:layout_width="0dp"
             android:layout_weight="1"
@@ -25,8 +25,7 @@
             android:textSize="30sp"
             tools:text="Recipe Description"
             android:textColor="@color/defaultCardColorText"
-            android:id="@+id/tv_step_short_description"
-            />
+            android:id="@+id/tv_step_short_description" />
 
         <ImageButton
             android:id="@+id/btn_play"
@@ -36,8 +35,7 @@
             android:layout_below="@id/tv_step_short_description"
             app:srcCompat="@android:drawable/ic_media_play"
             android:background="#227585"
-            android:layout_marginEnd="8dp"
-            />
+            android:layout_marginEnd="8dp" />
 
     </LinearLayout>
 

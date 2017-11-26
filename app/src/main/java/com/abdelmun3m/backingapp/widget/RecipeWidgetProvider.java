@@ -15,11 +15,10 @@ import com.abdelmun3m.backingapp.RecipeDetails.RecipeDetailsContainer;
 /**
  * Implementation of App Widget functionality.
  */
-public class RecipeWidgetProvider extends AppWidgetProvider{
+public class RecipeWidgetProvider extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId, RemoteViews views) {
-
 
 
         appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -33,13 +32,14 @@ public class RecipeWidgetProvider extends AppWidgetProvider{
 
 
     public static void UpdateWidgetRecipe(
-            Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds,RemoteViews views){
+            Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds, RemoteViews views) {
         for (int appWidgetId : appWidgetIds) {
 
-            updateAppWidget(context, appWidgetManager, appWidgetId , views);
+            updateAppWidget(context, appWidgetManager, appWidgetId, views);
         }
 
     }
+
     @Override
     public void onEnabled(Context context) {
         // Enter relevant functionality for when the first widget is created

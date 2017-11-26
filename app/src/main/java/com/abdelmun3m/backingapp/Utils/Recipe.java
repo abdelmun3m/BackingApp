@@ -22,22 +22,21 @@ import java.util.Map;
  * Created by abdelmun3m on 21/10/17.
  */
 
-public class Recipe implements Parcelable{
+public class Recipe implements Parcelable {
 
-    private  final String JSON_ID ="id" ;
-    private  final String JSON_NAME = "name";
-    private  final String JSON_INGREDIENTS = "ingredients";
-    private  final String JSON_STEPS = "steps";
+    private final String JSON_ID = "id";
+    private final String JSON_NAME = "name";
+    private final String JSON_INGREDIENTS = "ingredients";
+    private final String JSON_STEPS = "steps";
     private final String JSON_IMAGE = "image";
 
-   public String Id ;
-   public   String name;
-   public int servings;
-   public int imageId = -1;
-   public   String imageUrl;
-   public   List<Ingredient> ingredients = new ArrayList<>();
-   public List<Step> steps= new ArrayList<>();
-
+    public String Id;
+    public String name;
+    public int servings;
+    public int imageId = -1;
+    public String imageUrl;
+    public List<Ingredient> ingredients = new ArrayList<>();
+    public List<Step> steps = new ArrayList<>();
 
 
     protected Recipe(Parcel in) {
@@ -70,42 +69,42 @@ public class Recipe implements Parcelable{
     // get string and return List Of Recipes
     // calls ParseJson of Ingredient JsonParse
     //calls ParseJson of Steps JsonParse
-    public  List<Recipe> ParseJson(String queryResult) throws JSONException{
+    public List<Recipe> ParseJson(String queryResult) throws JSONException {
 
         List<Recipe> recipeList = new ArrayList<>();
         JSONArray result = new JSONArray(queryResult);
 
-        for (int i=0 ; i < result.length() ; i++){
+        for (int i = 0; i < result.length(); i++) {
 
             JSONObject JsonRecipe = result.getJSONObject(i);
             Recipe temp = new Recipe();
 
-            if(JsonRecipe.has(JSON_ID)){
+            if (JsonRecipe.has(JSON_ID)) {
                 temp.Id = JsonRecipe.getString(JSON_ID);
             }
-            
-            if(JsonRecipe.has(JSON_NAME)){
+
+            if (JsonRecipe.has(JSON_NAME)) {
                 temp.name = JsonRecipe.getString(JSON_NAME);
             }
 
-            if(JsonRecipe.has(JSON_IMAGE)){
+            if (JsonRecipe.has(JSON_IMAGE)) {
 
                 temp.imageUrl = JsonRecipe.getString(JSON_IMAGE);
             }
 
-            if(JsonRecipe.has(JSON_INGREDIENTS)){
+            if (JsonRecipe.has(JSON_INGREDIENTS)) {
 
                 temp.ingredients = new Ingredient().getIngredients(JsonRecipe.getString(JSON_INGREDIENTS));
 
             }
 
-            if(JsonRecipe.has(JSON_STEPS)){
+            if (JsonRecipe.has(JSON_STEPS)) {
                 temp.steps = new Step().getSteps(JsonRecipe.getString(JSON_STEPS));
 
             }
             recipeList.add(temp);
         }
-        return  recipeList;
+        return recipeList;
     }
 
 
@@ -126,23 +125,23 @@ public class Recipe implements Parcelable{
     }
 
 
-    public void loadMovieImage(String uri,ImageView im ){
-        if(uri == null || uri.equals("")){
+    public void loadMovieImage(String uri, ImageView im) {
+        if (uri == null || uri.equals("")) {
             return;
         }
         String Image_URL = uri;
         Picasso.with(im.getContext()).load(Image_URL).error(android.R.drawable.ic_menu_gallery)
                 .into(im, new Callback() {
-            @Override
-            public void onSuccess() {
+                    @Override
+                    public void onSuccess() {
 
-            }
+                    }
 
-            @Override
-            public void onError() {
+                    @Override
+                    public void onError() {
 
-            }
-        });
+                    }
+                });
     }
 }
 

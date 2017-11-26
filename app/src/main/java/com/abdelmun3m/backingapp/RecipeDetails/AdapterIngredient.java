@@ -17,30 +17,29 @@ import butterknife.ButterKnife;
 
 /**
  * Created by abdelmun3m on 22/10/17.
- *
- *
- *
+ * <p>
+ * <p>
+ * <p>
  * Adapter that handle ingredient Recycler View
  * it will get the activity which implement the IngredientClickListener
  * to link between the adapter and the @FragmentDetails to handle Ingredient Click to generate Toast
  */
 
-public class AdapterIngredient extends RecyclerView.Adapter<AdapterIngredient.IngredientViewHolder>{
-
+public class AdapterIngredient extends RecyclerView.Adapter<AdapterIngredient.IngredientViewHolder> {
 
 
     List<Ingredient> mIngredientsList = new ArrayList<>();
 
     IngredientClickListener mIngredientListener = null;
 
-    int position ;
+    int position;
 
-    public AdapterIngredient(IngredientClickListener listenr){
+    public AdapterIngredient(IngredientClickListener listenr) {
         this.mIngredientListener = listenr;
     }
 
 
-    public void UpdateIngredientList(List<Ingredient> newIngredient){
+    public void UpdateIngredientList(List<Ingredient> newIngredient) {
         this.mIngredientsList = newIngredient;
         notifyDataSetChanged();
     }
@@ -48,7 +47,7 @@ public class AdapterIngredient extends RecyclerView.Adapter<AdapterIngredient.In
     @Override
     public IngredientViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View mView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.ingredient_item,parent,false);
+                .inflate(R.layout.ingredient_item, parent, false);
         IngredientViewHolder mViewHolder = new IngredientViewHolder(mView);
         return mViewHolder;
     }
@@ -64,7 +63,7 @@ public class AdapterIngredient extends RecyclerView.Adapter<AdapterIngredient.In
     }
 
     public class IngredientViewHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener{
+            implements View.OnClickListener {
 
         @BindView(R.id.tv_ingredient)
         TextView mIngredient;
@@ -78,32 +77,32 @@ public class AdapterIngredient extends RecyclerView.Adapter<AdapterIngredient.In
         public IngredientViewHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
-            ButterKnife.bind(this,itemView);
-            position=getAdapterPosition();
+            ButterKnife.bind(this, itemView);
+            position = getAdapterPosition();
         }
 
-        public void OnBind(int position){
+        public void OnBind(int position) {
             Ingredient ing = mIngredientsList.get(getAdapterPosition());
             mIngredient.setText(ing.ingredient);
-            mIngredientID.setText(""+ing.quantity);
+            mIngredientID.setText("" + ing.quantity);
             mIngredientMeasure.setText(ing.measure);
         }
 
         @Override
         public void onClick(View v) {
-            if(mIngredientListener !=null){
-            mIngredientListener.OnIngredientClick(mIngredientsList.get(getAdapterPosition()));
+            if (mIngredientListener != null) {
+                mIngredientListener.OnIngredientClick(mIngredientsList.get(getAdapterPosition()));
             }
         }
     }
 
 
-
-    public int getCurrentPosition(){
-     return position;
+    public int getCurrentPosition() {
+        return position;
     }
+
     // interface to handel ingredient click
-    public interface IngredientClickListener{
+    public interface IngredientClickListener {
         void OnIngredientClick(Ingredient ing);
     }
 }

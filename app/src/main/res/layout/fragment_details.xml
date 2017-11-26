@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView android:id="@+id/detail_view_scrol"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -27,8 +28,7 @@
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/pie"
-                />
+                android:src="@drawable/pie" />
 
             <TextView
                 android:id="@+id/tv_detail_recipe_name"
@@ -39,8 +39,7 @@
                 android:textColor="@color/defaultCardColorText"
                 android:textSize="40sp"
                 android:paddingStart="@dimen/card_pading_start"
-                android:paddingBottom="@dimen/card_pading_start"
-                />
+                android:paddingBottom="@dimen/card_pading_start" />
 
             <ImageView
                 android:id="@+id/img_favorit_button"
@@ -60,13 +59,13 @@
             android:text="Ingredient"
             android:layout_margin="8dp"
             android:textSize="24dp" />
+
         <LinearLayout
             android:orientation="vertical"
             android:id="@+id/container_ingredient"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            ></LinearLayout>
+            android:layout_marginBottom="8dp"></LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
@@ -74,19 +73,20 @@
             android:text="Steps"
             android:layout_margin="8dp"
             android:textSize="24dp" />
+
         <LinearLayout
             android:orientation="vertical"
             android:id="@+id/container_steps"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:layout_height="@dimen/recipeCardHeight"
-            android:layout_marginBottom="8dp"
-            ></LinearLayout>
+            android:layout_marginBottom="8dp"></LinearLayout>
 
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <com.google.android.exoplayer2.ui.SimpleExoPlayerView
                 android:id="@+id/player_view"
                 android:layout_width="match_parent"
@@ -95,9 +95,7 @@
                 android:layout_marginBottom="@dimen/card_nargin_Start"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
-                android:visibility="visible"
-                >
-            </com.google.android.exoplayer2.ui.SimpleExoPlayerView>
+                android:visibility="visible"></com.google.android.exoplayer2.ui.SimpleExoPlayerView>
 
         </FrameLayout>
 
@@ -114,4 +112,4 @@
     </LinearLayout>
 
 
-</ScrollView>
+</android.support.v4.widget.NestedScrollView>

@@ -5,4 +5,20 @@
     <string name="errormessage">ErrorMessage</string>
     <string name="No_Data">NO Data Retrived</string>
     <string name="Network_Error">No Network Connection</string>
+    <string name="detail_fragment">detail_fragment</string>
+    <string name="step_fragment">step_fragment</string>
+    <string name="ingredient_fragment">ingredient_fragment</string>
+    <string name="vedio_mp4">.mp4</string>
+    <string name="vedio_mp3">.mp3</string>
+    <string name="uri">uri</string>
+    <string name="position">position</string>
+    <string name="recipe">recipe</string>
+    <string name="ingredient_state">ingState</string>
+    <string name="ingredient_list">ingList</string>
+    <string name="step_state">stpState</string>
+    <string name="step_list">stpList</string>
+    <string name="detail_state">detailState</string>
+    <string name="detail_list">detailList</string>
+    <string name="Null_intent">Null_intent</string>
+
 </resources>

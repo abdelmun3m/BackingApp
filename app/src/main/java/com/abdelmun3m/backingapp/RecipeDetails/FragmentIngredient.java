@@ -24,18 +24,18 @@ import butterknife.ButterKnife;
 
 /**
  * Created by abdelmun3m on 22/10/17.
- *
- *
- *
+ * <p>
+ * <p>
+ * <p>
  * class that mange and display the ingredient of a recipe in the Ingredient RecyclerView
  * impalement the @LayoutManager and  @AdapterIngredient
- *
- *
+ * <p>
+ * <p>
  * it will be called from the class @FragmentDetails.
  * will take  a list of @ingredient that will be passed to the adapter to create view
  */
 
-public class FragmentIngredient extends Fragment implements AdapterIngredient.IngredientClickListener{
+public class FragmentIngredient extends Fragment implements AdapterIngredient.IngredientClickListener {
 
 
     Context mContext;
@@ -43,19 +43,18 @@ public class FragmentIngredient extends Fragment implements AdapterIngredient.In
     List<Ingredient> mIngredientList = new ArrayList<>();
 
     RecyclerView.LayoutManager manager;
-    AdapterIngredient adapter ;
+    AdapterIngredient adapter;
     Parcelable ingredientState;
 
     @BindView(R.id.rv_ingredient)
     RecyclerView mIngredientView;
-    private String INGREDIENT_STATE = "ingState";
 
 
-    public FragmentIngredient(){
+    public FragmentIngredient() {
     }
 
 
-    public FragmentIngredient(List<Ingredient> ing){
+    public FragmentIngredient(List<Ingredient> ing) {
         this.mIngredientList = ing;
     }
 
@@ -65,20 +64,20 @@ public class FragmentIngredient extends Fragment implements AdapterIngredient.In
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
 
-        View rootView = inflater.inflate(R.layout.fragment_ingredient,container,false);
+        View rootView = inflater.inflate(R.layout.fragment_ingredient, container, false);
         mContext = rootView.getContext();
-        ButterKnife.bind(this,rootView);
+        ButterKnife.bind(this, rootView);
         setLayoutManger();
-        Log.d("twid","indredient create : "+ savedInstanceState);
         return rootView;
     }
+
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        Log.d("twid","ingredeitn restore" + savedInstanceState);
-        if(savedInstanceState != null) {
-            ingredientState = savedInstanceState.getParcelable(INGREDIENT_STATE);
-            mIngredientList = savedInstanceState.getParcelableArrayList("ings");
+
+        if (savedInstanceState != null) {
+            ingredientState = savedInstanceState.getParcelable(getString(R.string.ingredient_state));
+            mIngredientList = savedInstanceState.getParcelableArrayList(getString(R.string.ingredient_list));
         }
         adapter.UpdateIngredientList(mIngredientList);
     }
@@ -86,10 +85,8 @@ public class FragmentIngredient extends Fragment implements AdapterIngredient.In
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("twid","resume ingredient ");
-
-        if (manager != null){
-        manager.onRestoreInstanceState(ingredientState);
+        if (manager != null) {
+            manager.onRestoreInstanceState(ingredientState);
         }
     }
 
@@ -97,16 +94,15 @@ public class FragmentIngredient extends Fragment implements AdapterIngredient.In
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         ingredientState = manager.onSaveInstanceState();
-        outState.putParcelable(INGREDIENT_STATE, ingredientState);
-        outState.putParcelableArrayList("ings", (ArrayList<? extends Parcelable>) mIngredientList);
-        Log.d("twid","ingredient saveinstance : " );
+        outState.putParcelable(getString(R.string.ingredient_state), ingredientState);
+        outState.putParcelableArrayList(getString(R.string.ingredient_list), (ArrayList<? extends Parcelable>) mIngredientList);
     }
 
 
     private void setLayoutManger() {
         //set Layout manager and Adapter
         manager =
-                new LinearLayoutManager(mContext,LinearLayoutManager.HORIZONTAL,false);
+                new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
         adapter = new AdapterIngredient(this);
         mIngredientView.setAdapter(adapter);
         mIngredientView.setLayoutManager(manager);
@@ -119,7 +115,7 @@ public class FragmentIngredient extends Fragment implements AdapterIngredient.In
         /* Override from  @AdapterIngredient.IngredientClickListener to
         * in case of the content of ingredient is not full appear create a Toast
         */
-        Toast.makeText(mContext,""+ing.ingredient, Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, "" + ing.ingredient, Toast.LENGTH_SHORT).show();
     }
 
 }
