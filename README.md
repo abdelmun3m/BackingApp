@@ -1,6 +1,4 @@
 # BackingApp
 
-
-Transformed the user experience of a news reading app using Material Design principles.
-This includes consistent and meaningful use of Material Design UI components, fonts, color, motion and surfaces.
-nanodegree iconPart of the Android Developer Nanodegree Program
+Created an app to view video recipes that incorporated media loading, verifying user interfaces with UI tests,integrated third party libraries and provided a complete UX with home screen widget.
+nanodegree As a Part of the Android Developer Nanodegree Program
